@@ -17,9 +17,9 @@
     h1 { font-size: 3em; color: #ffd700; text-shadow: 0 0 30px #ffd700; margin: 10px 0 8px; }
     .subtitle { font-size: 1.5em; color: #ccc; margin-bottom: 30px; }
     canvas {
-      border: 20px solid #ffd700;
+      border: 22px solid #ffd700;
       border-radius: 50%;
-      box-shadow: 0 0 80px rgba(255, 215, 0, 0.95), inset 0 0 60px rgba(255,255,255,0.3);
+      box-shadow: 0 0 85px rgba(255, 215, 0, 0.95), inset 0 0 65px rgba(255,255,255,0.35);
       max-width: 100%;
       height: auto;
     }
@@ -45,11 +45,11 @@
   </style>
 </head>
 <body>
-  <div class="container" style="max-width: 720px; margin: 0 auto;">
+  <div class="container" style="max-width: 740px; margin: 0 auto;">
     <h1>🎡 Fortune Wheel</h1>
     <p class="subtitle">Quarterly Bonuses • Final Weekly Meeting</p>
     
-    <canvas id="wheel" width="680" height="680"></canvas>
+    <canvas id="wheel" width="720" height="720"></canvas>
 
     <div class="controls">
       <button id="spinSilver">Silver (1 spin)</button>
@@ -69,19 +69,19 @@
 
     let prizes = [
       { name: "€50 Cash", color: "#FF6B6B" },
-      { name: "3 Food Deliveries", color: "#4ECDC4" },
-      { name: "2 Extra Days Off", color: "#45B7D1" },
-      { name: "3 Massage Sessions", color: "#96CEB4" },
-      { name: "AI Subscription\n(1 month)", color: "#FFEEAD" },
+      { name: "Food Deliveries", color: "#4ECDC4" },
+      { name: "Extra Days Off", color: "#45B7D1" },
+      { name: "Massage Sessions", color: "#96CEB4" },
+      { name: "AI Subscription", color: "#FFEEAD" },
       { name: "€75 Gift Card", color: "#D4A5A5" },
-      { name: "Cinema Night Deluxe", color: "#FF9FF3" },
-      { name: "Barbershop / Hair", color: "#FFCC66" }
+      { name: "Cinema Deluxe", color: "#FF9FF3" },
+      { name: "Barbershop", color: "#FFCC66" }
     ];
 
     let currentPrizes = [...prizes];
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
-    const radius = 290;
+    const radius = 305;
     let rotation = 0;
     let isSpinning = false;
 
@@ -93,52 +93,61 @@
 
       currentPrizes.forEach((prize, i) => {
         const angle = rotation + arc * i;
+
+        // Сектор
         ctx.beginPath();
         ctx.fillStyle = prize.color;
         ctx.moveTo(centerX, centerY);
         ctx.arc(centerX, centerY, radius, angle, angle + arc);
         ctx.closePath();
         ctx.fill();
+
         ctx.strokeStyle = "#111";
-        ctx.lineWidth = 12;
+        ctx.lineWidth = 14;
         ctx.stroke();
 
+        // Текст — максимально ровный
         ctx.save();
         ctx.translate(centerX, centerY);
         ctx.rotate(angle + arc / 2);
         ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
         ctx.fillStyle = "#111";
-        ctx.font = "bold 19px Arial";
+        ctx.font = "bold 18px Arial";
         ctx.shadowColor = "#fff";
-        ctx.shadowBlur = 8;
+        ctx.shadowBlur = 10;
 
         const lines = prize.name.split('\n');
-        const textY = radius - 92;
+        const textY = radius - 88;
+
         lines.forEach((line, idx) => {
-          ctx.fillText(line, 0, textY + idx * 23);
+          ctx.fillText(line, 0, textY + idx * 22);
         });
         ctx.restore();
       });
 
-      // Центр
+      // Центр SPIN
       ctx.beginPath();
       ctx.fillStyle = "#111";
-      ctx.arc(centerX, centerY, 58, 0, Math.PI * 2);
+      ctx.arc(centerX, centerY, 62, 0, Math.PI * 2);
       ctx.fill();
+
       ctx.fillStyle = "#ffd700";
-      ctx.font = "bold 52px Arial";
-      ctx.fillText("SPIN", centerX, centerY + 18);
+      ctx.font = "bold 55px Arial";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("SPIN", centerX, centerY + 4);
 
       // Указатель
       ctx.save();
-      ctx.translate(centerX + radius + 22, centerY);
+      ctx.translate(centerX + radius + 25, centerY);
       ctx.fillStyle = "#ffd700";
       ctx.shadowColor = "#fff";
-      ctx.shadowBlur = 20;
+      ctx.shadowBlur = 25;
       ctx.beginPath();
-      ctx.moveTo(0, -30);
-      ctx.lineTo(48, 0);
-      ctx.lineTo(0, 30);
+      ctx.moveTo(0, -32);
+      ctx.lineTo(52, 0);
+      ctx.lineTo(0, 32);
       ctx.closePath();
       ctx.fill();
       ctx.restore();
