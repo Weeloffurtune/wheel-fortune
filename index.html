@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🎡 Fortune Wheel — Квартальные Бонусы</title>
+  <title>🎡 Fortune Wheel — Quarterly Bonuses</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -15,87 +15,85 @@
       min-height: 100vh;
     }
     h1 {
-      font-size: 2.8em;
+      font-size: 3em;
       color: #ffd700;
-      text-shadow: 0 0 25px #ffd700;
+      text-shadow: 0 0 30px #ffd700;
       margin: 10px 0 8px;
     }
     .subtitle {
-      font-size: 1.4em;
-      color: #aaa;
-      margin-bottom: 25px;
+      font-size: 1.5em;
+      color: #ccc;
+      margin-bottom: 30px;
     }
     canvas {
-      border: 18px solid #ffd700;
+      border: 20px solid #ffd700;
       border-radius: 50%;
-      box-shadow: 0 0 70px rgba(255, 215, 0, 0.95),
-                  inset 0 0 50px rgba(255,255,255,0.4);
+      box-shadow: 0 0 80px rgba(255, 215, 0, 0.95),
+                  inset 0 0 60px rgba(255,255,255,0.3);
       background: #111;
       max-width: 100%;
       height: auto;
     }
     .controls {
-      margin: 40px 0 25px;
+      margin: 45px 0 30px;
     }
     button {
       margin: 8px 6px;
-      padding: 16px 36px;
-      font-size: 23px;
+      padding: 16px 40px;
+      font-size: 24px;
       font-weight: bold;
       border: none;
       border-radius: 50px;
       cursor: pointer;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.6);
       transition: all 0.3s;
     }
     #spinSilver   { background: #c0c0c0; color: #111; }
     #spinGold     { background: #ffd700; color: #111; }
     #spinPlatinum { background: linear-gradient(#f0f0f0, #b0b0b0); color: #111; }
-    button:hover:not(:disabled) { transform: scale(1.1); }
-    button:disabled { opacity: 0.45; cursor: not-allowed; }
+    button:hover:not(:disabled) { transform: scale(1.08); }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
 
     #result {
       margin-top: 30px;
-      font-size: 2.1em;
+      font-size: 2.2em;
       font-weight: bold;
       min-height: 80px;
       text-shadow: 0 0 20px #ffd700;
     }
     .remaining {
-      margin-top: 20px;
-      font-size: 1.2em;
-      color: #ccc;
+      margin-top: 25px;
+      font-size: 1.3em;
+      color: #ddd;
     }
-    .container { max-width: 700px; margin: 0 auto; }
+    .container { max-width: 720px; margin: 0 auto; }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>🎡 Fortune Wheel</h1>
-    <p class="subtitle">Квартальные бонусы • Последний weekly</p>
+    <p class="subtitle">Quarterly Bonuses • Final Weekly Meeting</p>
     
-    <canvas id="wheel" width="600" height="600"></canvas>
+    <canvas id="wheel" width="620" height="620"></canvas>
 
     <div class="controls">
-      <button id="spinSilver">Silver (1 спин)</button>
-      <button id="spinGold">Gold (2 спина)</button>
-      <button id="spinPlatinum">Platinum (3 спина)</button>
+      <button id="spinSilver">Silver (1 spin)</button>
+      <button id="spinGold">Gold (2 spins)</button>
+      <button id="spinPlatinum">Platinum (3 spins)</button>
     </div>
 
     <div id="result"></div>
-    <div class="remaining" id="remaining">Осталось призов: <span id="count">8</span></div>
+    <div class="remaining">Remaining prizes: <span id="count">8</span></div>
   </div>
 
   <script>
     const canvas = document.getElementById('wheel');
     const ctx = canvas.getContext('2d');
     const resultDiv = document.getElementById('result');
-    const remainingDiv = document.getElementById('remaining');
     const countSpan = document.getElementById('count');
 
-    // Призы (можно менять)
     let prizes = [
-      { name: "€50 cash", color: "#FF6B6B" },
+      { name: "€50 Cash", color: "#FF6B6B" },
       { name: "3 Food Deliveries", color: "#4ECDC4" },
       { name: "2 Extra Days Off", color: "#45B7D1" },
       { name: "3 Massage Sessions", color: "#96CEB4" },
@@ -109,7 +107,7 @@
 
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
-    const radius = 265;
+    const radius = 270;
     let rotation = 0;
     let isSpinning = false;
 
@@ -132,47 +130,48 @@
         ctx.fill();
 
         ctx.strokeStyle = "#111";
-        ctx.lineWidth = 10;
+        ctx.lineWidth = 12;
         ctx.stroke();
 
-        // Текст
+        // Текст — улучшенное выравнивание
         ctx.save();
         ctx.translate(centerX, centerY);
         ctx.rotate(angle + arc / 2);
-        ctx.textAlign = "right";
+        ctx.textAlign = "center";
         ctx.fillStyle = "#111";
         ctx.font = "bold 19px Arial";
         ctx.shadowColor = "#fff";
-        ctx.shadowBlur = 8;
+        ctx.shadowBlur = 10;
 
         const lines = prize.name.split('\n');
+        const textRadius = radius - 65; // сдвинули текст ближе к центру — стало ровнее
         lines.forEach((line, idx) => {
-          ctx.fillText(line, radius - 45, 10 + idx * 24);
+          ctx.fillText(line, 0, textRadius + idx * 24);
         });
         ctx.restore();
       });
 
-      // Золотой центр
+      // Центральный круг + SPIN
       ctx.beginPath();
       ctx.fillStyle = "#111";
-      ctx.arc(centerX, centerY, 55, 0, Math.PI * 2);
+      ctx.arc(centerX, centerY, 58, 0, Math.PI * 2);
       ctx.fill();
 
       ctx.fillStyle = "#ffd700";
-      ctx.font = "bold 48px Arial";
+      ctx.font = "bold 52px Arial";
       ctx.textAlign = "center";
       ctx.fillText("SPIN", centerX, centerY + 18);
 
-      // Указатель (как на вашем Gold Wheel)
+      // Указатель
       ctx.save();
-      ctx.translate(centerX + radius + 18, centerY);
+      ctx.translate(centerX + radius + 22, centerY);
       ctx.fillStyle = "#ffd700";
       ctx.shadowColor = "#fff";
-      ctx.shadowBlur = 15;
+      ctx.shadowBlur = 20;
       ctx.beginPath();
-      ctx.moveTo(0, -25);
-      ctx.lineTo(40, 0);
-      ctx.lineTo(0, 25);
+      ctx.moveTo(0, -30);
+      ctx.lineTo(48, 0);
+      ctx.lineTo(0, 30);
       ctx.closePath();
       ctx.fill();
       ctx.restore();
@@ -181,17 +180,17 @@
     function spinWheel(spinsCount) {
       if (isSpinning || currentPrizes.length === 0) return;
       isSpinning = true;
-      resultDiv.textContent = "Крутим...";
+      resultDiv.textContent = "Spinning...";
 
       let spinsDone = 0;
 
       function doOneSpin() {
-        const totalRotations = 5 + Math.random() * 6;
+        const totalRotations = 6 + Math.random() * 5;
         const extraAngle = Math.random() * 2 * Math.PI;
         const targetRotation = rotation + totalRotations * 2 * Math.PI + extraAngle;
 
         let startTime = Date.now();
-        const duration = 4200;
+        const duration = 4300;
 
         function animate() {
           const elapsed = Date.now() - startTime;
@@ -207,21 +206,18 @@
             rotation = targetRotation;
             drawWheel();
 
-            // Определяем победителя
             const normalized = (rotation % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
             const index = Math.floor((2 * Math.PI - normalized) / (2 * Math.PI / currentPrizes.length)) % currentPrizes.length;
             const winner = currentPrizes[index];
 
             resultDiv.innerHTML = `🎉 <strong>${winner.name}</strong>`;
 
-            // Удаляем приз
             currentPrizes.splice(index, 1);
             countSpan.textContent = currentPrizes.length;
 
             spinsDone++;
-
             if (spinsDone < spinsCount && currentPrizes.length > 0) {
-              setTimeout(doOneSpin, 800); // пауза между спинами
+              setTimeout(doOneSpin, 900);
             } else {
               isSpinning = false;
             }
@@ -229,16 +225,13 @@
         }
         animate();
       }
-
       doOneSpin();
     }
 
-    // Кнопки
     document.getElementById('spinSilver').addEventListener('click', () => spinWheel(1));
     document.getElementById('spinGold').addEventListener('click', () => spinWheel(2));
     document.getElementById('spinPlatinum').addEventListener('click', () => spinWheel(3));
 
-    // Первая отрисовка
     drawWheel();
   </script>
 </body>
