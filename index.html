@@ -19,7 +19,7 @@
     canvas {
       border: 22px solid #ffd700;
       border-radius: 50%;
-      box-shadow: 0 0 85px rgba(255, 215, 0, 0.95), inset 0 0 65px rgba(255,255,255,0.35);
+      box-shadow: 0 0 90px rgba(255, 215, 0, 0.95), inset 0 0 70px rgba(255,255,255,0.4);
       max-width: 100%;
       height: auto;
     }
@@ -45,11 +45,11 @@
   </style>
 </head>
 <body>
-  <div class="container" style="max-width: 740px; margin: 0 auto;">
+  <div class="container" style="max-width: 760px; margin: 0 auto;">
     <h1>🎡 Fortune Wheel</h1>
     <p class="subtitle">Quarterly Bonuses • Final Weekly Meeting</p>
     
-    <canvas id="wheel" width="720" height="720"></canvas>
+    <canvas id="wheel" width="740" height="740"></canvas>
 
     <div class="controls">
       <button id="spinSilver">Silver (1 spin)</button>
@@ -67,6 +67,7 @@
     const resultDiv = document.getElementById('result');
     const countSpan = document.getElementById('count');
 
+    // Короткие названия — чтобы текст сидел ровно по центру сектора
     let prizes = [
       { name: "€50 Cash", color: "#FF6B6B" },
       { name: "Food Deliveries", color: "#4ECDC4" },
@@ -81,7 +82,7 @@
     let currentPrizes = [...prizes];
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
-    const radius = 305;
+    const radius = 315;
     let rotation = 0;
     let isSpinning = false;
 
@@ -106,48 +107,44 @@
         ctx.lineWidth = 14;
         ctx.stroke();
 
-        // Текст — максимально ровный
+        // Текст — идеально по центру сектора (как на твоём Gold Wheel)
         ctx.save();
         ctx.translate(centerX, centerY);
         ctx.rotate(angle + arc / 2);
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillStyle = "#111";
-        ctx.font = "bold 18px Arial";
+        ctx.font = "bold 19px Arial";
         ctx.shadowColor = "#fff";
         ctx.shadowBlur = 10;
 
-        const lines = prize.name.split('\n');
-        const textY = radius - 88;
-
-        lines.forEach((line, idx) => {
-          ctx.fillText(line, 0, textY + idx * 22);
-        });
+        const textRadius = radius - 95;   // главное значение для центрирования
+        ctx.fillText(prize.name, 0, textRadius);
         ctx.restore();
       });
 
-      // Центр SPIN
+      // Центральный круг
       ctx.beginPath();
       ctx.fillStyle = "#111";
-      ctx.arc(centerX, centerY, 62, 0, Math.PI * 2);
+      ctx.arc(centerX, centerY, 65, 0, Math.PI * 2);
       ctx.fill();
 
       ctx.fillStyle = "#ffd700";
-      ctx.font = "bold 55px Arial";
+      ctx.font = "bold 58px Arial";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.fillText("SPIN", centerX, centerY + 4);
+      ctx.fillText("SPIN", centerX, centerY);
 
-      // Указатель
+      // Указатель (как на Gold Wheel)
       ctx.save();
-      ctx.translate(centerX + radius + 25, centerY);
+      ctx.translate(centerX + radius + 28, centerY);
       ctx.fillStyle = "#ffd700";
       ctx.shadowColor = "#fff";
       ctx.shadowBlur = 25;
       ctx.beginPath();
-      ctx.moveTo(0, -32);
-      ctx.lineTo(52, 0);
-      ctx.lineTo(0, 32);
+      ctx.moveTo(0, -35);
+      ctx.lineTo(55, 0);
+      ctx.lineTo(0, 35);
       ctx.closePath();
       ctx.fill();
       ctx.restore();
