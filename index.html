@@ -3,10 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🎡 Fortune Wheel — Quarterly Bonuses</title>
+  <title>Boutique Support Victorine - Fortune Wheel</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Impact:wght@400;700&family=Arial:wght@700&display=swap');
+
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Arial', sans-serif;
       background: linear-gradient(135deg, #0f0f1a, #1a1a2e);
       color: #fff;
       text-align: center;
@@ -14,12 +16,24 @@
       margin: 0;
       min-height: 100vh;
     }
-    h1 { font-size: 3em; color: #ffd700; text-shadow: 0 0 30px #ffd700; margin: 10px 0 8px; }
-    .subtitle { font-size: 1.5em; color: #ccc; margin-bottom: 30px; }
+    h1 {
+      font-family: 'Impact', 'Arial Black', sans-serif;
+      font-size: 2.8em;
+      color: #ffd700;
+      text-shadow: 0 0 35px #ffd700;
+      margin: 10px 0 8px;
+      letter-spacing: 2px;
+    }
+    .subtitle {
+      font-size: 1.6em;
+      color: #ccc;
+      margin-bottom: 30px;
+      font-weight: bold;
+    }
     canvas {
       border: 24px solid #ffd700;
       border-radius: 50%;
-      box-shadow: 0 0 90px rgba(255, 215, 0, 0.95), inset 0 0 70px rgba(255,255,255,0.4);
+      box-shadow: 0 0 95px rgba(255, 215, 0, 0.95), inset 0 0 75px rgba(255,255,255,0.4);
       max-width: 100%;
       height: auto;
     }
@@ -46,8 +60,8 @@
 </head>
 <body>
   <div class="container" style="max-width: 780px; margin: 0 auto;">
-    <h1>🎡 Fortune Wheel</h1>
-    <p class="subtitle">Quarterly Bonuses • Final Weekly Meeting</p>
+    <h1>🎡 Boutique Support Victorine</h1>
+    <p class="subtitle">Quarterly Bonuses</p>
     
     <canvas id="wheel" width="780" height="780"></canvas>
 
@@ -94,7 +108,6 @@
       currentPrizes.forEach((prize, i) => {
         const angle = rotation + arc * i;
 
-        // Сектор
         ctx.beginPath();
         ctx.fillStyle = prize.color;
         ctx.moveTo(centerX, centerY);
@@ -106,10 +119,10 @@
         ctx.lineWidth = 16;
         ctx.stroke();
 
-        // ТЕКСТ ГОРИЗОНТАЛЬНО ПО ЦЕНТРУ СЕКТОРА
+        // Горизонтальный текст по центру сектора
         ctx.save();
         ctx.translate(centerX, centerY);
-        ctx.rotate(angle + arc / 2);           // поворот до центра сектора
+        ctx.rotate(angle + arc / 2);
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillStyle = "#111";
@@ -117,23 +130,23 @@
         ctx.shadowColor = "#fff";
         ctx.shadowBlur = 12;
 
-        ctx.fillText(prize.name, radius - 105, 0);   // горизонтальный текст
+        ctx.fillText(prize.name, radius - 105, 0);
         ctx.restore();
       });
 
       // Центр
       ctx.beginPath();
       ctx.fillStyle = "#111";
-      ctx.arc(centerX, centerY, 68, 0, Math.PI * 2);
+      ctx.arc(centerX, centerY, 65, 0, Math.PI * 2);
       ctx.fill();
 
       ctx.fillStyle = "#ffd700";
-      ctx.font = "bold 62px Arial";
+      ctx.font = "bold 48px Arial";        // ← SPIN стал меньше
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillText("SPIN", centerX, centerY);
 
-      // Указатель (остриём к колесу)
+      // Указатель
       ctx.save();
       ctx.translate(centerX + radius + 32, centerY);
       ctx.fillStyle = "#ffd700";
