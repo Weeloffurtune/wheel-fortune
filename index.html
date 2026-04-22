@@ -14,23 +14,12 @@
       margin: 0;
       min-height: 100vh;
     }
-    h1 {
-      font-size: 3em;
-      color: #ffd700;
-      text-shadow: 0 0 30px #ffd700;
-      margin: 10px 0 8px;
-    }
-    .subtitle {
-      font-size: 1.5em;
-      color: #ccc;
-      margin-bottom: 30px;
-    }
+    h1 { font-size: 3em; color: #ffd700; text-shadow: 0 0 30px #ffd700; margin: 10px 0 8px; }
+    .subtitle { font-size: 1.5em; color: #ccc; margin-bottom: 30px; }
     canvas {
       border: 20px solid #ffd700;
       border-radius: 50%;
-      box-shadow: 0 0 80px rgba(255, 215, 0, 0.95),
-                  inset 0 0 60px rgba(255,255,255,0.3);
-      background: #111;
+      box-shadow: 0 0 80px rgba(255, 215, 0, 0.95), inset 0 0 60px rgba(255,255,255,0.3);
       max-width: 100%;
       height: auto;
     }
@@ -51,28 +40,16 @@
     #spinPlatinum { background: linear-gradient(#f0f0f0, #b0b0b0); color: #111; }
     button:hover:not(:disabled) { transform: scale(1.08); }
     button:disabled { opacity: 0.5; cursor: not-allowed; }
-
-    #result {
-      margin-top: 30px;
-      font-size: 2.2em;
-      font-weight: bold;
-      min-height: 80px;
-      text-shadow: 0 0 20px #ffd700;
-    }
-    .remaining {
-      margin-top: 25px;
-      font-size: 1.3em;
-      color: #ddd;
-    }
-    .container { max-width: 720px; margin: 0 auto; }
+    #result { margin-top: 30px; font-size: 2.2em; font-weight: bold; min-height: 80px; text-shadow: 0 0 20px #ffd700; }
+    .remaining { margin-top: 25px; font-size: 1.3em; color: #ddd; }
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="container" style="max-width: 720px; margin: 0 auto;">
     <h1>🎡 Fortune Wheel</h1>
     <p class="subtitle">Quarterly Bonuses • Final Weekly Meeting</p>
     
-    <canvas id="wheel" width="640" height="640"></canvas>
+    <canvas id="wheel" width="680" height="680"></canvas>
 
     <div class="controls">
       <button id="spinSilver">Silver (1 spin)</button>
@@ -95,17 +72,16 @@
       { name: "3 Food Deliveries", color: "#4ECDC4" },
       { name: "2 Extra Days Off", color: "#45B7D1" },
       { name: "3 Massage Sessions", color: "#96CEB4" },
-      { name: "1-month AI Sub\n(ChatGPT/Claude/Grok)", color: "#FFEEAD" },
+      { name: "AI Subscription\n(1 month)", color: "#FFEEAD" },
       { name: "€75 Gift Card", color: "#D4A5A5" },
       { name: "Cinema Night Deluxe", color: "#FF9FF3" },
-      { name: "Barbershop / Hair Styling", color: "#FFCC66" }
+      { name: "Barbershop / Hair", color: "#FFCC66" }
     ];
 
     let currentPrizes = [...prizes];
-
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
-    const radius = 275;
+    const radius = 290;
     let rotation = 0;
     let isSpinning = false;
 
@@ -113,39 +89,33 @@
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       const total = currentPrizes.length;
       if (total === 0) return;
-
       const arc = (2 * Math.PI) / total;
 
       currentPrizes.forEach((prize, i) => {
         const angle = rotation + arc * i;
-
-        // Сектор
         ctx.beginPath();
         ctx.fillStyle = prize.color;
         ctx.moveTo(centerX, centerY);
         ctx.arc(centerX, centerY, radius, angle, angle + arc);
         ctx.closePath();
         ctx.fill();
-
         ctx.strokeStyle = "#111";
         ctx.lineWidth = 12;
         ctx.stroke();
 
-        // УЛУЧШЕННОЕ позиционирование текста
         ctx.save();
         ctx.translate(centerX, centerY);
         ctx.rotate(angle + arc / 2);
         ctx.textAlign = "center";
         ctx.fillStyle = "#111";
-        ctx.font = "bold 18px Arial";
+        ctx.font = "bold 19px Arial";
         ctx.shadowColor = "#fff";
         ctx.shadowBlur = 8;
 
         const lines = prize.name.split('\n');
-        const textY = radius - 78;   // ← главный параметр, который сделал текст ровнее
-
+        const textY = radius - 92;   // ← самое удачное положение
         lines.forEach((line, idx) => {
-          ctx.fillText(line, 0, textY + idx * 22);
+          ctx.fillText(line, 0, textY + idx * 23);
         });
         ctx.restore();
       });
@@ -155,10 +125,8 @@
       ctx.fillStyle = "#111";
       ctx.arc(centerX, centerY, 58, 0, Math.PI * 2);
       ctx.fill();
-
       ctx.fillStyle = "#ffd700";
       ctx.font = "bold 52px Arial";
-      ctx.textAlign = "center";
       ctx.fillText("SPIN", centerX, centerY + 18);
 
       // Указатель
@@ -176,18 +144,16 @@
       ctx.restore();
     }
 
-    function spinWheel(spinsCount) {
+    function spinWheel(spinsCount) { /* тот же код, что раньше */ 
       if (isSpinning || currentPrizes.length === 0) return;
       isSpinning = true;
       resultDiv.textContent = "Spinning...";
-
       let spinsDone = 0;
 
       function doOneSpin() {
         const totalRotations = 6 + Math.random() * 5;
         const extraAngle = Math.random() * 2 * Math.PI;
         const targetRotation = rotation + totalRotations * 2 * Math.PI + extraAngle;
-
         let startTime = Date.now();
         const duration = 4300;
 
@@ -195,30 +161,21 @@
           const elapsed = Date.now() - startTime;
           const progress = Math.min(elapsed / duration, 1);
           const ease = 1 - Math.pow(1 - progress, 4);
-
           rotation = targetRotation * ease;
           drawWheel();
-
           if (progress < 1) requestAnimationFrame(animate);
           else {
             rotation = targetRotation;
             drawWheel();
-
             const normalized = (rotation % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
             const index = Math.floor((2 * Math.PI - normalized) / (2 * Math.PI / currentPrizes.length)) % currentPrizes.length;
             const winner = currentPrizes[index];
-
             resultDiv.innerHTML = `🎉 <strong>${winner.name}</strong>`;
-
             currentPrizes.splice(index, 1);
             countSpan.textContent = currentPrizes.length;
-
             spinsDone++;
-            if (spinsDone < spinsCount && currentPrizes.length > 0) {
-              setTimeout(doOneSpin, 900);
-            } else {
-              isSpinning = false;
-            }
+            if (spinsDone < spinsCount && currentPrizes.length > 0) setTimeout(doOneSpin, 900);
+            else isSpinning = false;
           }
         }
         animate();
