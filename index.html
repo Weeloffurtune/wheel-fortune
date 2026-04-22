@@ -35,8 +35,8 @@
       box-shadow: 0 8px 25px rgba(0,0,0,0.6);
       transition: all 0.3s;
     }
-    #spinSilver { background: #c0c0c0; color: #111; }
-    #spinGold { background: #ffd700; color: #111; }
+    #spinSilver   { background: #c0c0c0; color: #111; }
+    #spinGold     { background: #ffd700; color: #111; }
     #spinPlatinum { background: linear-gradient(#f0f0f0, #b0b0b0); color: #111; }
     button:hover:not(:disabled) { transform: scale(1.08); }
     button:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -70,11 +70,11 @@
     let prizes = [
       { name: "€50 Cash", color: "#FF6B6B" },
       { name: "Food Deliveries", color: "#4ECDC4" },
-      { name: "Extra Days Off", color: "#45B7D1" },
-      { name: "Massage Sessions", color: "#96CEB4" },
-      { name: "AI Subscription", color: "#FFEEAD" },
-      { name: "€75 Gift Card", color: "#D4A5A5" },
-      { name: "Cinema Deluxe", color: "#FF9FF3" },
+      { name: "Days Off", color: "#45B7D1" },
+      { name: "Massage", color: "#96CEB4" },
+      { name: "AI Sub", color: "#FFEEAD" },
+      { name: "€75 Gift", color: "#D4A5A5" },
+      { name: "Cinema", color: "#FF9FF3" },
       { name: "Barbershop", color: "#FFCC66" }
     ];
 
@@ -106,18 +106,18 @@
         ctx.lineWidth = 16;
         ctx.stroke();
 
-        // Текст — точно по центру сектора (как на Gold Wheel)
+        // ТЕКСТ ГОРИЗОНТАЛЬНО ПО ЦЕНТРУ СЕКТОРА
         ctx.save();
         ctx.translate(centerX, centerY);
-        ctx.rotate(angle + arc / 2);
+        ctx.rotate(angle + arc / 2);           // поворот до центра сектора
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillStyle = "#111";
-        ctx.font = "bold 20px Arial";
+        ctx.font = "bold 21px Arial";
         ctx.shadowColor = "#fff";
         ctx.shadowBlur = 12;
 
-        ctx.fillText(prize.name, 0, radius - 105);
+        ctx.fillText(prize.name, radius - 105, 0);   // горизонтальный текст
         ctx.restore();
       });
 
@@ -133,7 +133,7 @@
       ctx.textBaseline = "middle";
       ctx.fillText("SPIN", centerX, centerY);
 
-      // Указатель — остриём к колесу (как нужно)
+      // Указатель (остриём к колесу)
       ctx.save();
       ctx.translate(centerX + radius + 32, centerY);
       ctx.fillStyle = "#ffd700";
@@ -141,7 +141,7 @@
       ctx.shadowBlur = 25;
       ctx.beginPath();
       ctx.moveTo(-10, -38);
-      ctx.lineTo(-68, 0);   // острый конец направлен ВЛЕВО — к колесу
+      ctx.lineTo(-72, 0);
       ctx.lineTo(-10, 38);
       ctx.closePath();
       ctx.fill();
