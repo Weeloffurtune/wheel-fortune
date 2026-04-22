@@ -113,7 +113,7 @@
         ctx.shadowBlur = 8;
 
         const lines = prize.name.split('\n');
-        const textY = radius - 92;   // ← самое удачное положение
+        const textY = radius - 92;
         lines.forEach((line, idx) => {
           ctx.fillText(line, 0, textY + idx * 23);
         });
@@ -144,16 +144,18 @@
       ctx.restore();
     }
 
-    function spinWheel(spinsCount) { /* тот же код, что раньше */ 
+    function spinWheel(spinsCount) {
       if (isSpinning || currentPrizes.length === 0) return;
       isSpinning = true;
       resultDiv.textContent = "Spinning...";
+
       let spinsDone = 0;
 
       function doOneSpin() {
         const totalRotations = 6 + Math.random() * 5;
         const extraAngle = Math.random() * 2 * Math.PI;
         const targetRotation = rotation + totalRotations * 2 * Math.PI + extraAngle;
+
         let startTime = Date.now();
         const duration = 4300;
 
@@ -161,21 +163,31 @@
           const elapsed = Date.now() - startTime;
           const progress = Math.min(elapsed / duration, 1);
           const ease = 1 - Math.pow(1 - progress, 4);
+
           rotation = targetRotation * ease;
           drawWheel();
-          if (progress < 1) requestAnimationFrame(animate);
-          else {
+
+          if (progress < 1) {
+            requestAnimationFrame(animate);
+          } else {
             rotation = targetRotation;
             drawWheel();
+
             const normalized = (rotation % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
             const index = Math.floor((2 * Math.PI - normalized) / (2 * Math.PI / currentPrizes.length)) % currentPrizes.length;
             const winner = currentPrizes[index];
+
             resultDiv.innerHTML = `🎉 <strong>${winner.name}</strong>`;
+
             currentPrizes.splice(index, 1);
             countSpan.textContent = currentPrizes.length;
+
             spinsDone++;
-            if (spinsDone < spinsCount && currentPrizes.length > 0) setTimeout(doOneSpin, 900);
-            else isSpinning = false;
+            if (spinsDone < spinsCount && currentPrizes.length > 0) {
+              setTimeout(doOneSpin, 900);
+            } else {
+              isSpinning = false;
+            }
           }
         }
         animate();
