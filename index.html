@@ -53,7 +53,6 @@
     button:hover:not(:disabled) { transform: scale(1.08); }
     button:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* Поп-апы */
     #nameModal, #winModal {
       display: none;
       position: fixed;
@@ -110,7 +109,6 @@
     <div class="remaining">Remaining prizes: <span id="count">7</span></div>
   </div>
 
-  <!-- Поп-ап ввода имени -->
   <div id="nameModal">
     <div class="modal-content">
       <h2>Who's spinning?</h2>
@@ -121,7 +119,6 @@
     </div>
   </div>
 
-  <!-- Поп-ап с выигрышем -->
   <div id="winModal">
     <div class="modal-content">
       <h2 id="winTitle">Congratulations!</h2>
@@ -143,7 +140,7 @@
     const winButton = document.getElementById('winButton');
 
     let currentAgent = "";
-    let remainingSpins = 0;   // сколько спинов ещё осталось в текущей сессии
+    let remainingSpins = 0;
     let isSpinning = false;
 
     let shortPrizes = [
@@ -323,7 +320,6 @@
           currentPrizes.splice(index, 1);
           countSpan.textContent = currentPrizes.length;
 
-          // 2 секунды задержки перед поп-апом
           setTimeout(() => {
             showWinModal(winnerIndex);
           }, 2000);
@@ -335,7 +331,6 @@
       animate();
     }
 
-    // Кнопки
     document.getElementById('spinSilver').addEventListener('click', () => showNameModal(1));
     document.getElementById('spinGold').addEventListener('click', () => showNameModal(2));
     document.getElementById('spinPlatinum').addEventListener('click', () => showNameModal(3));
