@@ -53,7 +53,7 @@
     button:hover:not(:disabled) { transform: scale(1.08); }
     button:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* Поп-ап ввода имени */
+    /* Поп-апы */
     #nameModal, #winModal {
       display: none;
       position: fixed;
@@ -65,10 +65,10 @@
     }
     .modal-content {
       background: linear-gradient(135deg, #ff69b4, #ff1493);
-      padding: 40px 50px;
+      padding: 45px 55px;
       border-radius: 24px;
       text-align: center;
-      max-width: 420px;
+      max-width: 520px;
       box-shadow: 0 0 70px rgba(255, 20, 147, 0.9);
       color: white;
     }
@@ -84,7 +84,7 @@
     .modal-content button {
       background: white;
       color: #ff1493;
-      padding: 14px 50px;
+      padding: 14px 60px;
       font-size: 1.4em;
       border: none;
       border-radius: 50px;
@@ -110,7 +110,7 @@
     <div class="remaining">Remaining prizes: <span id="count">7</span></div>
   </div>
 
-  <!-- Поп-ап для ввода имени агента -->
+  <!-- Поп-ап ввода имени -->
   <div id="nameModal">
     <div class="modal-content">
       <h2>Who's spinning?</h2>
@@ -121,11 +121,11 @@
     </div>
   </div>
 
-  <!-- Поп-ап с выигрышем -->
+  <!-- Поп-ап с выигрышем (полный текст) -->
   <div id="winModal">
     <div class="modal-content">
       <h2 id="winTitle">Congratulations!</h2>
-      <p id="winText">You have received a Bonus prize!</p>
+      <p id="winText" style="font-size:1.35em; line-height:1.5;"></p>
       <button onclick="closeWinModal()">OK</button>
     </div>
   </div>
@@ -143,7 +143,10 @@
     const winText = document.getElementById('winText');
 
     let currentAgent = "";
-    let prizes = [
+    let currentSpinsCount = 1;
+
+    // Короткие версии для колеса
+    let shortPrizes = [
       { name: "💰 €50 cash", color: "#FF6B6B" },
       { name: "🍔 3 food deliveries", color: "#4ECDC4" },
       { name: "🏖️ 2 extra days off", color: "#45B7D1" },
@@ -153,7 +156,19 @@
       { name: "🎬 Cinema deluxe", color: "#FF9FF3" }
     ];
 
-    let currentPrizes = [...prizes];
+    // Полные версии для поп-апа
+    const fullPrizes = [
+      "€50 cash",
+      "3 food deliveries covered by the company",
+      "2 extra days off covered by the company",
+      "3 full-body massage sessions",
+      "A 1-month subscriptions to ChatGPT Plus, Claude Pro, Grok (X Premium), or another AI tool",
+      "Universal gift card (€75) (Amazon or local platforms)",
+      "Cinema/theatre/ ballet night deluxe (tickets + snacks + drinks)",
+      "Barbershop visit (for men) or hair styling/manicure (for women)"
+    ];
+
+    let currentPrizes = [...shortPrizes];
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
     const radius = 335;
@@ -180,13 +195,11 @@
     }
 
     function showNameModal(spinsCount) {
-      currentSpinsCount = spinsCount; // сохраняем сколько спинов нужно сделать
-      agentInput.value = ""; 
+      currentSpinsCount = spinsCount;
+      agentInput.value = "";
       nameModal.style.display = 'flex';
       agentInput.focus();
     }
-
-    let currentSpinsCount = 1;
 
     function startSpin() {
       currentAgent = agentInput.value.trim() || "Agent";
@@ -194,9 +207,10 @@
       spinWheel(currentSpinsCount);
     }
 
-    function showWinModal(prizeName) {
+    function showWinModal(prizeIndex) {
+      const fullPrizeText = fullPrizes[prizeIndex];
       winTitle.innerHTML = `Congratulations, <strong>${currentAgent}</strong>!`;
-      winText.innerHTML = `You won:<br><strong style="font-size:1.6em;">${prizeName}</strong>`;
+      winText.innerHTML = fullPrizeText;
       winModal.style.display = 'flex';
       launchConfetti();
     }
@@ -205,7 +219,6 @@
       winModal.style.display = 'none';
     }
 
-    // drawWheel и spinWheel (оставил почти как было, только добавил вызов showWinModal)
     function drawWheel() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       const total = currentPrizes.length;
@@ -294,17 +307,25 @@
             const normalized = (rotation % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
             const index = Math.floor((2 * Math.PI - normalized) / (2 * Math.PI / currentPrizes.length)) % currentPrizes.length;
 
-            const winner = currentPrizes[index];
-            resultDiv.innerHTML = `🎉 <strong>${winner.name}</strong>`;
+            const winnerShort = currentPrizes[index];
+            const winnerIndex = shortPrizes.findIndex(p => p.name === winnerShort.name);
+
+            resultDiv.innerHTML = `🎉 <strong>${winnerShort.name}</strong>`;
 
             currentPrizes.splice(index, 1);
             countSpan.textContent = currentPrizes.length;
 
-            showWinModal(winner.name);
+            // Показываем полный поп-ап
+            showWinModal(winnerIndex);
 
             spinsDone++;
+
+            // Если это не последний спин — закрываем поп-ап через 5 секунд и запускаем следующий
             if (spinsDone < spinsCount && currentPrizes.length > 0) {
-              setTimeout(doOneSpin, 900);
+              setTimeout(() => {
+                closeWinModal();           // закрываем поп-ап
+                doOneSpin();               // сразу следующий спин
+              }, 5000);
             } else {
               isSpinning = false;
             }
@@ -315,7 +336,7 @@
       doOneSpin();
     }
 
-    // Привязка кнопок — теперь они открывают поп-ап с вводом имени
+    // Кнопки
     document.getElementById('spinSilver').addEventListener('click', () => showNameModal(1));
     document.getElementById('spinGold').addEventListener('click', () => showNameModal(2));
     document.getElementById('spinPlatinum').addEventListener('click', () => showNameModal(3));
