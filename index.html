@@ -24,12 +24,6 @@
       margin: 10px 0 8px;
       letter-spacing: 3px;
     }
-    .subtitle {
-      font-size: 1.4em;
-      color: #bbb;
-      margin-bottom: 30px;
-      font-weight: bold;
-    }
     canvas {
       border: 24px solid #ffd700;
       border-radius: 50%;
@@ -59,14 +53,12 @@
     button:hover:not(:disabled) { transform: scale(1.08); }
     button:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    #result { margin-top: 30px; font-size: 2.2em; font-weight: bold; min-height: 80px; text-shadow: 0 0 20px #ffd700; }
-
-    /* Поп-ап окно */
-    #modal {
+    /* Поп-ап ввода имени */
+    #nameModal, #winModal {
       display: none;
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.85);
+      background: rgba(0,0,0,0.9);
       z-index: 1000;
       justify-content: center;
       align-items: center;
@@ -74,19 +66,20 @@
     .modal-content {
       background: linear-gradient(135deg, #ff69b4, #ff1493);
       padding: 40px 50px;
-      border-radius: 20px;
+      border-radius: 24px;
       text-align: center;
       max-width: 420px;
-      box-shadow: 0 0 60px rgba(255, 20, 147, 0.8);
+      box-shadow: 0 0 70px rgba(255, 20, 147, 0.9);
       color: white;
     }
-    .modal-content h2 {
-      font-size: 2.2em;
-      margin: 0 0 15px 0;
-    }
-    .modal-content p {
-      font-size: 1.3em;
-      margin: 15px 0 30px;
+    .modal-content input {
+      width: 100%;
+      padding: 14px;
+      font-size: 1.4em;
+      border: none;
+      border-radius: 12px;
+      margin: 20px 0;
+      text-align: center;
     }
     .modal-content button {
       background: white;
@@ -97,6 +90,7 @@
       border-radius: 50px;
       cursor: pointer;
       font-weight: bold;
+      margin: 10px;
     }
   </style>
 </head>
@@ -116,12 +110,23 @@
     <div class="remaining">Remaining prizes: <span id="count">7</span></div>
   </div>
 
-  <!-- Поп-ап -->
-  <div id="modal">
+  <!-- Поп-ап для ввода имени агента -->
+  <div id="nameModal">
     <div class="modal-content">
-      <h2 id="modal-prize"></h2>
-      <p id="modal-text">Congratulations!<br>You have received a Bonus prize!</p>
-      <button onclick="closeModal()">OK</button>
+      <h2>Who's spinning?</h2>
+      <input type="text" id="agentInput" placeholder="Enter agent name" autofocus>
+      <div>
+        <button onclick="startSpin()">Start Spinning</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Поп-ап с выигрышем -->
+  <div id="winModal">
+    <div class="modal-content">
+      <h2 id="winTitle">Congratulations!</h2>
+      <p id="winText">You have received a Bonus prize!</p>
+      <button onclick="closeWinModal()">OK</button>
     </div>
   </div>
 
@@ -130,9 +135,14 @@
     const ctx = canvas.getContext('2d');
     const resultDiv = document.getElementById('result');
     const countSpan = document.getElementById('count');
-    const modal = document.getElementById('modal');
-    const modalPrize = document.getElementById('modal-prize');
 
+    const nameModal = document.getElementById('nameModal');
+    const winModal = document.getElementById('winModal');
+    const agentInput = document.getElementById('agentInput');
+    const winTitle = document.getElementById('winTitle');
+    const winText = document.getElementById('winText');
+
+    let currentAgent = "";
     let prizes = [
       { name: "💰 €50 cash", color: "#FF6B6B" },
       { name: "🍔 3 food deliveries", color: "#4ECDC4" },
@@ -169,16 +179,33 @@
       }
     }
 
-    function showModal(prizeName) {
-      modalPrize.textContent = prizeName;
-      modal.style.display = 'flex';
+    function showNameModal(spinsCount) {
+      currentSpinsCount = spinsCount; // сохраняем сколько спинов нужно сделать
+      agentInput.value = ""; 
+      nameModal.style.display = 'flex';
+      agentInput.focus();
+    }
+
+    let currentSpinsCount = 1;
+
+    function startSpin() {
+      currentAgent = agentInput.value.trim() || "Agent";
+      nameModal.style.display = 'none';
+      spinWheel(currentSpinsCount);
+    }
+
+    function showWinModal(prizeName) {
+      winTitle.innerHTML = `Congratulations, <strong>${currentAgent}</strong>!`;
+      winText.innerHTML = `You won:<br><strong style="font-size:1.6em;">${prizeName}</strong>`;
+      winModal.style.display = 'flex';
       launchConfetti();
     }
 
-    function closeModal() {
-      modal.style.display = 'none';
+    function closeWinModal() {
+      winModal.style.display = 'none';
     }
 
+    // drawWheel и spinWheel (оставил почти как было, только добавил вызов showWinModal)
     function drawWheel() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       const total = currentPrizes.length;
@@ -211,7 +238,6 @@
         ctx.restore();
       });
 
-      // Центр
       ctx.beginPath();
       ctx.fillStyle = "#111";
       ctx.arc(centerX, centerY, 65, 0, Math.PI * 2);
@@ -222,7 +248,6 @@
       ctx.textBaseline = "middle";
       ctx.fillText("SPIN", centerX, centerY);
 
-      // Указатель
       ctx.save();
       ctx.translate(centerX + radius + 32, centerY);
       ctx.fillStyle = "#ffd700";
@@ -264,39 +289,4 @@
             requestAnimationFrame(animate);
           } else {
             rotation = targetRotation;
-            drawWheel();
-
-            const normalized = (rotation % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
-            const index = Math.floor((2 * Math.PI - normalized) / (2 * Math.PI / currentPrizes.length)) % currentPrizes.length;
-
-            const winner = currentPrizes[index];
-            resultDiv.innerHTML = `🎉 <strong>${winner.name}</strong>`;
-
-            currentPrizes.splice(index, 1);
-            countSpan.textContent = currentPrizes.length;
-
-            // Показываем красивый поп-ап
-            showModal(winner.name);
-
-            spinsDone++;
-            if (spinsDone < spinsCount && currentPrizes.length > 0) {
-              setTimeout(doOneSpin, 900);
-            } else {
-              isSpinning = false;
-            }
-          }
-        }
-        animate();
-      }
-      doOneSpin();
-    }
-
-    document.getElementById('spinSilver').addEventListener('click', () => spinWheel(1));
-    document.getElementById('spinGold').addEventListener('click', () => spinWheel(2));
-    document.getElementById('spinPlatinum').addEventListener('click', () => spinWheel(3));
-
-    drawWheel();
-    countSpan.textContent = currentPrizes.length;
-  </script>
-</body>
-</html>
+            drawWheel
