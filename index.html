@@ -289,4 +289,39 @@
             requestAnimationFrame(animate);
           } else {
             rotation = targetRotation;
-            drawWheel
+            drawWheel();
+
+            const normalized = (rotation % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
+            const index = Math.floor((2 * Math.PI - normalized) / (2 * Math.PI / currentPrizes.length)) % currentPrizes.length;
+
+            const winner = currentPrizes[index];
+            resultDiv.innerHTML = `🎉 <strong>${winner.name}</strong>`;
+
+            currentPrizes.splice(index, 1);
+            countSpan.textContent = currentPrizes.length;
+
+            showWinModal(winner.name);
+
+            spinsDone++;
+            if (spinsDone < spinsCount && currentPrizes.length > 0) {
+              setTimeout(doOneSpin, 900);
+            } else {
+              isSpinning = false;
+            }
+          }
+        }
+        animate();
+      }
+      doOneSpin();
+    }
+
+    // Привязка кнопок — теперь они открывают поп-ап с вводом имени
+    document.getElementById('spinSilver').addEventListener('click', () => showNameModal(1));
+    document.getElementById('spinGold').addEventListener('click', () => showNameModal(2));
+    document.getElementById('spinPlatinum').addEventListener('click', () => showNameModal(3));
+
+    drawWheel();
+    countSpan.textContent = currentPrizes.length;
+  </script>
+</body>
+</html>
