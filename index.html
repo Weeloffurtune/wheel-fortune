@@ -6,7 +6,6 @@
   <title>Boutique Support Victorine - Fortune Wheel</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Impact:wght@400;700&family=Arial:wght@700&display=swap');
-
     body {
       font-family: 'Arial', sans-serif;
       background: linear-gradient(135deg, #0f0f1a, #1a1a2e);
@@ -49,8 +48,8 @@
       box-shadow: 0 8px 25px rgba(0,0,0,0.6);
       transition: all 0.3s;
     }
-    #spinSilver   { background: #c0c0c0; color: #111; }
-    #spinGold     { background: #ffd700; color: #111; }
+    #spinSilver { background: #c0c0c0; color: #111; }
+    #spinGold { background: #ffd700; color: #111; }
     #spinPlatinum { background: linear-gradient(#f0f0f0, #b0b0b0); color: #111; }
     button:hover:not(:disabled) { transform: scale(1.08); }
     button:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -62,17 +61,15 @@
   <div class="container" style="max-width: 780px; margin: 0 auto;">
     <h1>🎡 Boutique Support Victorine</h1>
     <p class="subtitle">Quarterly Bonuses</p>
-    
+   
     <canvas id="wheel" width="780" height="780"></canvas>
-
     <div class="controls">
       <button id="spinSilver">Silver (1 spin)</button>
       <button id="spinGold">Gold (2 spins)</button>
       <button id="spinPlatinum">Platinum (3 spins)</button>
     </div>
-
     <div id="result"></div>
-    <div class="remaining">Remaining prizes: <span id="count">8</span></div>
+    <div class="remaining">Remaining prizes: <span id="count">7</span></div>
   </div>
 
   <script>
@@ -82,14 +79,13 @@
     const countSpan = document.getElementById('count');
 
     let prizes = [
-      { name: "€50 Cash", color: "#FF6B6B" },
-      { name: "Food Deliveries", color: "#4ECDC4" },
-      { name: "Days Off", color: "#45B7D1" },
-      { name: "Massage", color: "#96CEB4" },
-      { name: "AI Sub", color: "#FFEEAD" },
-      { name: "€75 Gift", color: "#D4A5A5" },
-      { name: "Cinema", color: "#FF9FF3" },
-      { name: "Barbershop", color: "#FFCC66" }
+      { name: "💰 €50 cash", color: "#FF6B6B" },
+      { name: "🍔 3 food deliveries", color: "#4ECDC4" },
+      { name: "🏖️ 2 extra days off", color: "#45B7D1" },
+      { name: "💆 3 massage", color: "#96CEB4" },
+      { name: "🤖 1-month AI", color: "#FFEEAD" },
+      { name: "🎟️ €75 gift card", color: "#D4A5A5" },
+      { name: "🎬 Cinema deluxe", color: "#FF9FF3" }
     ];
 
     let currentPrizes = [...prizes];
@@ -99,6 +95,33 @@
     let rotation = 0;
     let isSpinning = false;
 
+    // Конфетти
+    function launchConfetti() {
+      const colors = ['#ffd700', '#ff00cc', '#00ffff', '#7CFF2E', '#FF2D55', '#ff8800'];
+      for (let i = 0; i < 220; i++) {
+        setTimeout(() => {
+          const c = document.createElement('div');
+          c.style.position = 'fixed';
+          c.style.left = Math.random() * 100 + 'vw';
+          c.style.top = '-20px';
+          c.style.width = '13px';
+          c.style.height = '13px';
+          c.style.background = colors[Math.floor(Math.random() * colors.length)];
+          c.style.zIndex = '9999';
+          c.style.opacity = Math.random() * 0.9 + 0.4;
+          document.body.appendChild(c);
+
+          const duration = 2800 + Math.random() * 2200;
+          c.animate([
+            { transform: 'translateY(0) rotate(0deg)' },
+            { transform: `translateY(${window.innerHeight + 250}px) rotate(${Math.random() * 1200}deg)` }
+          ], { duration: duration, easing: 'cubic-bezier(0.25, 0.1, 0.25, 1)' });
+
+          setTimeout(() => c.remove(), duration);
+        }, i * 1.5);
+      }
+    }
+
     function drawWheel() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       const total = currentPrizes.length;
@@ -107,7 +130,6 @@
 
       currentPrizes.forEach((prize, i) => {
         const angle = rotation + arc * i;
-
         ctx.beginPath();
         ctx.fillStyle = prize.color;
         ctx.moveTo(centerX, centerY);
@@ -119,7 +141,7 @@
         ctx.lineWidth = 16;
         ctx.stroke();
 
-        // Горизонтальный текст по центру сектора
+        // Твой любимый горизонтальный текст
         ctx.save();
         ctx.translate(centerX, centerY);
         ctx.rotate(angle + arc / 2);
@@ -129,7 +151,6 @@
         ctx.font = "bold 21px Arial";
         ctx.shadowColor = "#fff";
         ctx.shadowBlur = 12;
-
         ctx.fillText(prize.name, radius - 105, 0);
         ctx.restore();
       });
@@ -139,9 +160,8 @@
       ctx.fillStyle = "#111";
       ctx.arc(centerX, centerY, 65, 0, Math.PI * 2);
       ctx.fill();
-
       ctx.fillStyle = "#ffd700";
-      ctx.font = "bold 48px Arial";        // ← SPIN стал меньше
+      ctx.font = "bold 48px Arial";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillText("SPIN", centerX, centerY);
@@ -184,23 +204,29 @@
           rotation = targetRotation * ease;
           drawWheel();
 
-          if (progress < 1) requestAnimationFrame(animate);
-          else {
+          if (progress < 1) {
+            requestAnimationFrame(animate);
+          } else {
             rotation = targetRotation;
             drawWheel();
 
             const normalized = (rotation % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
             const index = Math.floor((2 * Math.PI - normalized) / (2 * Math.PI / currentPrizes.length)) % currentPrizes.length;
-            const winner = currentPrizes[index];
 
+            const winner = currentPrizes[index];
             resultDiv.innerHTML = `🎉 <strong>${winner.name}</strong>`;
 
             currentPrizes.splice(index, 1);
             countSpan.textContent = currentPrizes.length;
 
+            launchConfetti();   // ← вот конфетти
+
             spinsDone++;
-            if (spinsDone < spinsCount && currentPrizes.length > 0) setTimeout(doOneSpin, 900);
-            else isSpinning = false;
+            if (spinsDone < spinsCount && currentPrizes.length > 0) {
+              setTimeout(doOneSpin, 900);
+            } else {
+              isSpinning = false;
+            }
           }
         }
         animate();
@@ -213,6 +239,7 @@
     document.getElementById('spinPlatinum').addEventListener('click', () => spinWheel(3));
 
     drawWheel();
+    countSpan.textContent = currentPrizes.length;
   </script>
 </body>
 </html>
