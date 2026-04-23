@@ -143,7 +143,7 @@
     const winButton = document.getElementById('winButton');
 
     let currentAgent = "";
-    let remainingSpins = 0;        // ← сколько спинов ещё нужно сделать
+    let remainingSpins = 0;   // сколько спинов ещё осталось в текущей сессии
     let isSpinning = false;
 
     let shortPrizes = [
@@ -212,16 +212,14 @@
 
       const isLastSpin = remainingSpins <= 1;
 
-      if (remainingSpins === 1) {
-        // Silver
+      if (isLastSpin) {
         winButton.textContent = "Claim Reward";
         winButton.onclick = closeWinModal;
       } else {
-        // Gold / Platinum
         winButton.textContent = "Next Spin →";
         winButton.onclick = () => {
           closeWinModal();
-          if (remainingSpins > 1) spinWheel();
+          spinWheel();
         };
       }
 
