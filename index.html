@@ -169,6 +169,7 @@
     const centerY = canvas.height / 2;
     const radius = 335;
     let rotation = 0;
+    let pointerBounce = 0;   // ← для эффекта отскока стрелки
 
     function launchConfetti() {
       const colors = ['#ffd700', '#ff00cc', '#00ffff', '#7CFF2E', '#FF2D55'];
@@ -207,7 +208,7 @@
       winTitle.innerHTML = `Congratulations, <strong>${currentAgent}</strong>!`;
       winText.innerHTML = fullPrizeText;
 
-      const isLastSpin = remainingSpins === 0;
+      const isLastSpin = remainingSpins <= 1;
 
       if (isLastSpin) {
         winButton.textContent = "Claim Reward";
@@ -259,6 +260,23 @@
         ctx.restore();
       });
 
+      // Красные пины (как в Crazy Time)
+      const pinCount = currentPrizes.length * 3;
+      for (let i = 0; i < pinCount; i++) {
+        const angle = rotation + (i * 2 * Math.PI / pinCount);
+        const x = centerX + Math.cos(angle) * (radius + 18);
+        const y = centerY + Math.sin(angle) * (radius + 18);
+        ctx.beginPath();
+        ctx.arc(x, y, 7, 0, Math.PI * 2);
+        ctx.fillStyle = "#ff2d2d";
+        ctx.fill();
+        ctx.shadowColor = "#ff0000";
+        ctx.shadowBlur = 8;
+        ctx.fill();
+      }
+      ctx.shadowBlur = 0;
+
+      // Центр
       ctx.beginPath();
       ctx.fillStyle = "#111";
       ctx.arc(centerX, centerY, 65, 0, Math.PI * 2);
@@ -269,8 +287,9 @@
       ctx.textBaseline = "middle";
       ctx.fillText("SPIN", centerX, centerY);
 
+      // Стрелка (чуть правее + bounce)
       ctx.save();
-      ctx.translate(centerX + radius + 32, centerY);
+      ctx.translate(centerX + radius + 48, centerY); // ← сдвиг вправо
       ctx.fillStyle = "#ffd700";
       ctx.shadowColor = "#fff";
       ctx.shadowBlur = 25;
