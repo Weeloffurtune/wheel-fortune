@@ -97,8 +97,8 @@
       { name: "💰 €50 cash", color: "#FF2D55" },
       { name: "🍔 3 food deliveries", color: "#00D4FF" },
       { name: "🏖️ 2 extra days off", color: "#7CFF2E" },
-      { name: "💆 3 massage sessions", color: "#FF9F2E" },
-      { name: "🤖 1-month AI sub", color: "#C724FF" },
+      { name: "💆 3 massage", color: "#FF9F2E" },
+      { name: "🤖 1-month AI", color: "#C724FF" },
       { name: "🎟️ €75 gift card", color: "#FFEE00" },
       { name: "🎬 Cinema deluxe", color: "#00FF9F" }
     ];
@@ -120,7 +120,6 @@
       currentPrizes.forEach((prize, i) => {
         const angle = rotation + arc * i;
 
-        // Градиент сектора
         const grad = ctx.createRadialGradient(centerX, centerY, radius * 0.35, centerX, centerY, radius);
         grad.addColorStop(0, '#ffffff');
         grad.addColorStop(1, prize.color);
@@ -135,19 +134,19 @@
         ctx.lineWidth = 12;
         ctx.stroke();
 
-        // УЛУЧШЕННЫЙ ТЕКСТ (ровнее и читаемее)
+        // Текст — максимально читаемый
         ctx.save();
         ctx.translate(centerX, centerY);
         ctx.rotate(angle + arc / 2);
         ctx.textAlign = "center";
         ctx.fillStyle = "#111";
-        ctx.font = "bold 22px Arial";
+        ctx.font = "bold 23px Arial";
         ctx.shadowColor = "#fff";
-        ctx.shadowBlur = 12;
+        ctx.shadowBlur = 10;
 
         const lines = prize.name.split(' ');
         lines.forEach((line, idx) => {
-          ctx.fillText(line, 0, -radius * 0.52 + idx * 30);
+          ctx.fillText(line, 0, -radius * 0.48 + idx * 29);
         });
         ctx.restore();
       });
@@ -171,16 +170,16 @@
       ctx.font = "bold 52px Arial";
       ctx.fillText("✦", centerX, centerY + 18);
 
-      // СТРЕЛКА ОСТРИЁМ ВНУТРЬ (вниз к секторам)
+      // СТРЕЛКА ОСТРИЁМ ВНИЗ ВНУТРЬ КОЛЕСА
       ctx.save();
       ctx.translate(centerX, centerY);
       ctx.beginPath();
       ctx.fillStyle = "#ffd700";
       ctx.shadowColor = "#ffd700";
       ctx.shadowBlur = 40;
-      ctx.moveTo(0, -radius - 68);     // остриё (вниз внутрь)
-      ctx.lineTo(-45, -radius - 5);    // левая сторона
-      ctx.lineTo(45, -radius - 5);     // правая сторона
+      ctx.moveTo(0, -radius - 72);     // ОСТРИЁ ВВЕРХ (наверху экрана)
+      ctx.lineTo(-48, -radius + 18);   // левая часть базы
+      ctx.lineTo(48, -radius + 18);    // правая часть базы
       ctx.closePath();
       ctx.fill();
       ctx.restore();
@@ -225,8 +224,9 @@
         rotation = totalRotation * ease;
         drawWheel();
 
-        if (progress < 1) requestAnimationFrame(animate);
-        else {
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        } else {
           rotation = totalRotation;
           drawWheel();
 
