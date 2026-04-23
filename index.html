@@ -1,103 +1,156 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Boutique Support Victorine - Fortune Wheel</title>
+  <title>Neon Luxe Wheel — Квартальные Бонусы</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Impact:wght@400;700&family=Arial:wght@700&display=swap');
-
     body {
-      font-family: 'Arial', sans-serif;
-      background: linear-gradient(135deg, #0f0f1a, #1a1a2e);
+      font-family: system-ui, -apple-system, Arial, sans-serif;
+      background: radial-gradient(circle at center, #1a0033, #0a001a);
       color: #fff;
       text-align: center;
       padding: 30px 20px;
       margin: 0;
       min-height: 100vh;
+      overflow: hidden;
     }
     h1 {
-      font-family: 'Impact', 'Arial Black', sans-serif;
-      font-size: 2.8em;
-      color: #ffd700;
-      text-shadow: 0 0 35px #ffd700;
+      font-size: 3em;
       margin: 10px 0 8px;
-      letter-spacing: 2px;
+      background: linear-gradient(90deg, #ffd700, #ff00cc, #00ffff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 40px rgba(255, 215, 0, 0.8);
     }
     .subtitle {
-      font-size: 1.6em;
-      color: #ccc;
-      margin-bottom: 30px;
-      font-weight: bold;
+      font-size: 1.4em;
+      color: #bbb;
+      margin-bottom: 20px;
+      letter-spacing: 2px;
     }
     canvas {
-      border: 24px solid #ffd700;
+      border: 18px solid #ffd700;
       border-radius: 50%;
-      box-shadow: 0 0 95px rgba(255, 215, 0, 0.95), inset 0 0 75px rgba(255,255,255,0.4);
+      box-shadow: 
+        0 0 80px #ffd700,
+        0 0 120px rgba(255, 0, 204, 0.6),
+        inset 0 0 60px rgba(255,255,255,0.4);
+      background: #000;
       max-width: 100%;
       height: auto;
     }
-    .controls { margin: 45px 0 30px; }
+    .controls {
+      margin: 40px 0 25px;
+    }
     button {
-      margin: 8px 6px;
-      padding: 16px 40px;
-      font-size: 24px;
-      font-weight: bold;
+      margin: 10px 8px;
+      padding: 16px 36px;
+      font-size: 23px;
+      font-weight: 700;
       border: none;
       border-radius: 50px;
       cursor: pointer;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.6);
-      transition: all 0.3s;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
     }
-    #spinSilver   { background: #c0c0c0; color: #111; }
-    #spinGold     { background: #ffd700; color: #111; }
-    #spinPlatinum { background: linear-gradient(#f0f0f0, #b0b0b0); color: #111; }
-    button:hover:not(:disabled) { transform: scale(1.08); }
-    button:disabled { opacity: 0.5; cursor: not-allowed; }
-    #result { margin-top: 30px; font-size: 2.2em; font-weight: bold; min-height: 80px; text-shadow: 0 0 20px #ffd700; }
-    .remaining { margin-top: 25px; font-size: 1.3em; color: #ddd; }
+    #spinSilver { background: linear-gradient(#c0c0c0, #666); color: #000; }
+    #spinGold   { background: linear-gradient(#ffd700, #ffaa00); color: #000; }
+    #spinPlatinum { background: linear-gradient(#e0e0e0, #a0a0a0); color: #111; font-size: 24px; }
+
+    button:hover:not(:disabled) {
+      transform: translateY(-4px) scale(1.08);
+      box-shadow: 0 15px 35px rgba(255,215,0,0.5);
+    }
+    button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    #result {
+      margin-top: 30px;
+      font-size: 2.4em;
+      font-weight: bold;
+      min-height: 80px;
+      text-shadow: 0 0 30px #ffd700;
+    }
+    .remaining {
+      font-size: 1.3em;
+      color: #aaa;
+      margin-top: 15px;
+    }
+    .container { max-width: 700px; margin: 0 auto; }
   </style>
 </head>
 <body>
-  <div class="container" style="max-width: 780px; margin: 0 auto;">
-    <h1>🎡 Boutique Support Victorine</h1>
-    <p class="subtitle">Quarterly Bonuses</p>
+  <div class="container">
+    <h1>NEON LUXE WHEEL</h1>
+    <p class="subtitle">КВАРТАЛЬНЫЕ БОНУСЫ • LAST WEEKLY</p>
     
-    <canvas id="wheel" width="780" height="780"></canvas>
+    <canvas id="wheel" width="620" height="620"></canvas>
 
     <div class="controls">
-      <button id="spinSilver">Silver (1 spin)</button>
-      <button id="spinGold">Gold (2 spins)</button>
-      <button id="spinPlatinum">Platinum (3 spins)</button>
+      <button id="spinSilver">Silver (1 спин)</button>
+      <button id="spinGold">Gold (2 спина)</button>
+      <button id="spinPlatinum">Platinum (3 спина)</button>
     </div>
 
     <div id="result"></div>
-    <div class="remaining">Remaining prizes: <span id="count">8</span></div>
+    <div class="remaining" id="remaining"></div>
   </div>
 
   <script>
     const canvas = document.getElementById('wheel');
     const ctx = canvas.getContext('2d');
     const resultDiv = document.getElementById('result');
-    const countSpan = document.getElementById('count');
+    const remainingDiv = document.getElementById('remaining');
 
     let prizes = [
-      { name: "€50 Cash", color: "#FF6B6B" },
-      { name: "Food Deliveries", color: "#4ECDC4" },
-      { name: "Days Off", color: "#45B7D1" },
-      { name: "Massage", color: "#96CEB4" },
-      { name: "AI Sub", color: "#FFEEAD" },
-      { name: "€75 Gift", color: "#D4A5A5" },
-      { name: "Cinema", color: "#FF9FF3" },
-      { name: "Barbershop", color: "#FFCC66" }
+      { name: "💰 €50 cash", color: "#FF2D55" },
+      { name: "🍔 3 food deliveries", color: "#00D4FF" },
+      { name: "🏖️ 2 extra days off", color: "#7CFF2E" },
+      { name: "💆 3 massage sessions", color: "#FF9F2E" },
+      { name: "🤖 1-month AI sub", color: "#C724FF" },
+      { name: "🎟️ €75 gift card", color: "#FFEE00" },
+      { name: "🎬 Cinema deluxe", color: "#00FF9F" }
     ];
 
     let currentPrizes = [...prizes];
-    const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2;
-    const radius = 335;
     let rotation = 0;
     let isSpinning = false;
+
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = 265;
+
+    // Простая конфетти-анимация
+    function launchConfetti() {
+      const colors = ['#ffd700', '#ff00cc', '#00ffff', '#7CFF2E'];
+      for (let i = 0; i < 150; i++) {
+        setTimeout(() => {
+          const confetti = document.createElement('div');
+          confetti.style.position = 'fixed';
+          confetti.style.left = Math.random() * 100 + 'vw';
+          confetti.style.top = '-10px';
+          confetti.style.width = '12px';
+          confetti.style.height = '12px';
+          confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+          confetti.style.opacity = Math.random() * 0.9 + 0.3;
+          confetti.style.transform = `rotate(${Math.random()*360}deg)`;
+          confetti.style.zIndex = '9999';
+          document.body.appendChild(confetti);
+
+          const duration = Math.random() * 3000 + 2500;
+          const angle = Math.random() * 80 + 30;
+          confetti.animate([
+            { transform: `translateY(0) rotate(0deg)` },
+            { transform: `translateY(${window.innerHeight + 100}px) rotate(${angle * 8}deg)` }
+          ], {
+            duration: duration,
+            easing: 'cubic-bezier(0.25, 0.1, 0.25, 1)'
+          });
+
+          setTimeout(() => confetti.remove(), duration);
+        }, i * 1.5);
+      }
+    }
 
     function drawWheel() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -108,111 +161,123 @@
       currentPrizes.forEach((prize, i) => {
         const angle = rotation + arc * i;
 
+        // Градиент сектора
+        const gradient = ctx.createRadialGradient(centerX, centerY, radius * 0.4, centerX, centerY, radius);
+        gradient.addColorStop(0, '#ffffff');
+        gradient.addColorStop(1, prize.color);
+
         ctx.beginPath();
-        ctx.fillStyle = prize.color;
+        ctx.fillStyle = gradient;
         ctx.moveTo(centerX, centerY);
         ctx.arc(centerX, centerY, radius, angle, angle + arc);
         ctx.closePath();
         ctx.fill();
 
-        ctx.strokeStyle = "#111";
-        ctx.lineWidth = 16;
+        ctx.strokeStyle = '#111';
+        ctx.lineWidth = 9;
         ctx.stroke();
 
-        // Горизонтальный текст по центру сектора
+        // Текст
         ctx.save();
         ctx.translate(centerX, centerY);
         ctx.rotate(angle + arc / 2);
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
+        ctx.textAlign = "right";
         ctx.fillStyle = "#111";
-        ctx.font = "bold 21px Arial";
+        ctx.font = "bold 19px Arial";
         ctx.shadowColor = "#fff";
-        ctx.shadowBlur = 12;
-
-        ctx.fillText(prize.name, radius - 105, 0);
+        ctx.shadowBlur = 8;
+        const lines = prize.name.split(' ');
+        lines.forEach((line, idx) => {
+          ctx.fillText(line, radius - 45, 8 + idx * 24);
+        });
         ctx.restore();
       });
 
+      // Внешнее золотое кольцо
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius + 28, 0, Math.PI * 2);
+      ctx.strokeStyle = "#ffd700";
+      ctx.lineWidth = 22;
+      ctx.shadowColor = "#ffd700";
+      ctx.shadowBlur = 35;
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
       // Центр
       ctx.beginPath();
+      ctx.arc(centerX, centerY, 55, 0, Math.PI * 2);
       ctx.fillStyle = "#111";
-      ctx.arc(centerX, centerY, 65, 0, Math.PI * 2);
       ctx.fill();
-
       ctx.fillStyle = "#ffd700";
-      ctx.font = "bold 48px Arial";        // ← SPIN стал меньше
+      ctx.font = "bold 38px Arial";
       ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText("SPIN", centerX, centerY);
+      ctx.fillText("✦", centerX, centerY + 13);
 
-      // Указатель
+      // Фиксированная стрелка сверху
       ctx.save();
-      ctx.translate(centerX + radius + 32, centerY);
-      ctx.fillStyle = "#ffd700";
-      ctx.shadowColor = "#fff";
-      ctx.shadowBlur = 25;
+      ctx.translate(centerX, centerY);
       ctx.beginPath();
-      ctx.moveTo(-10, -38);
-      ctx.lineTo(-72, 0);
-      ctx.lineTo(-10, 38);
+      ctx.fillStyle = "#ffd700";
+      ctx.shadowColor = "#ffd700";
+      ctx.shadowBlur = 25;
+      ctx.moveTo(0, -radius - 35);
+      ctx.lineTo(-25, -radius + 20);
+      ctx.lineTo(25, -radius + 20);
       ctx.closePath();
       ctx.fill();
       ctx.restore();
     }
 
-    function spinWheel(spinsCount) {
+    function spin(wheelType) {
       if (isSpinning || currentPrizes.length === 0) return;
       isSpinning = true;
-      resultDiv.textContent = "Spinning...";
+      resultDiv.textContent = "КРУТИМ...";
 
-      let spinsDone = 0;
+      const spins = 7 + Math.random() * 5;
+      const extra = Math.random() * 2 * Math.PI;
+      const totalRotation = rotation + spins * 2 * Math.PI + extra;
 
-      function doOneSpin() {
-        const totalRotations = 6 + Math.random() * 5;
-        const extraAngle = Math.random() * 2 * Math.PI;
-        const targetRotation = rotation + totalRotations * 2 * Math.PI + extraAngle;
+      let start = Date.now();
+      const duration = 4800;
 
-        let startTime = Date.now();
-        const duration = 4300;
+      function animate() {
+        const elapsed = Date.now() - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const ease = 1 - Math.pow(1 - progress, 4);
 
-        function animate() {
-          const elapsed = Date.now() - startTime;
-          const progress = Math.min(elapsed / duration, 1);
-          const ease = 1 - Math.pow(1 - progress, 4);
+        rotation = totalRotation * ease;
+        drawWheel();
 
-          rotation = targetRotation * ease;
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        } else {
+          rotation = totalRotation;
           drawWheel();
 
-          if (progress < 1) requestAnimationFrame(animate);
-          else {
-            rotation = targetRotation;
-            drawWheel();
+          const normalized = ((rotation % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+          const index = Math.floor((2 * Math.PI - normalized) / (2 * Math.PI / currentPrizes.length)) % currentPrizes.length;
+          
+          const winner = currentPrizes[index];
+          resultDiv.innerHTML = `🎉 <strong>${winner.name}</strong>`;
 
-            const normalized = (rotation % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
-            const index = Math.floor((2 * Math.PI - normalized) / (2 * Math.PI / currentPrizes.length)) % currentPrizes.length;
-            const winner = currentPrizes[index];
+          // Удаляем приз
+          currentPrizes.splice(index, 1);
+          remainingDiv.textContent = `Осталось призов: ${currentPrizes.length}`;
 
-            resultDiv.innerHTML = `🎉 <strong>${winner.name}</strong>`;
-
-            currentPrizes.splice(index, 1);
-            countSpan.textContent = currentPrizes.length;
-
-            spinsDone++;
-            if (spinsDone < spinsCount && currentPrizes.length > 0) setTimeout(doOneSpin, 900);
-            else isSpinning = false;
-          }
+          launchConfetti();
+          isSpinning = false;
         }
-        animate();
       }
-      doOneSpin();
+      animate();
     }
 
-    document.getElementById('spinSilver').addEventListener('click', () => spinWheel(1));
-    document.getElementById('spinGold').addEventListener('click', () => spinWheel(2));
-    document.getElementById('spinPlatinum').addEventListener('click', () => spinWheel(3));
-
+    // Инициализация
     drawWheel();
+    remainingDiv.textContent = `Осталось призов: ${currentPrizes.length}`;
+
+    document.getElementById('spinSilver').addEventListener('click', () => spin('silver'));
+    document.getElementById('spinGold').addEventListener('click', () => spin('gold'));
+    document.getElementById('spinPlatinum').addEventListener('click', () => spin('platinum'));
   </script>
 </body>
 </html>
