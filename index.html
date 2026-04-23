@@ -97,15 +97,15 @@
 <body>
   <div class="container" style="max-width: 780px; margin: 0 auto;">
     <h1>Lucky Spin Rewards</h1>
-    
+   
     <canvas id="wheel" width="780" height="780"></canvas>
-    
+   
     <div class="controls">
       <button id="spinSilver">Silver (1 spin)</button>
       <button id="spinGold">Gold (2 spins)</button>
       <button id="spinPlatinum">Platinum (3 spins)</button>
     </div>
-    
+   
     <div id="result"></div>
     <div class="remaining">Remaining prizes: <span id="count">7</span></div>
   </div>
@@ -121,7 +121,7 @@
     </div>
   </div>
 
-  <!-- Поп-ап с выигрышем (полный текст) -->
+  <!-- Поп-ап с выигрышем -->
   <div id="winModal">
     <div class="modal-content">
       <h2 id="winTitle">Congratulations!</h2>
@@ -135,7 +135,6 @@
     const ctx = canvas.getContext('2d');
     const resultDiv = document.getElementById('result');
     const countSpan = document.getElementById('count');
-
     const nameModal = document.getElementById('nameModal');
     const winModal = document.getElementById('winModal');
     const agentInput = document.getElementById('agentInput');
@@ -145,7 +144,6 @@
     let currentAgent = "";
     let currentSpinsCount = 1;
 
-    // Короткие версии для колеса
     let shortPrizes = [
       { name: "💰 €50 cash", color: "#FF6B6B" },
       { name: "🍔 3 food deliveries", color: "#4ECDC4" },
@@ -156,7 +154,6 @@
       { name: "🎬 Cinema deluxe", color: "#FF9FF3" }
     ];
 
-    // Полные версии для поп-апа
     const fullPrizes = [
       "€50 cash",
       "3 food deliveries covered by the company",
@@ -315,16 +312,17 @@
             currentPrizes.splice(index, 1);
             countSpan.textContent = currentPrizes.length;
 
-            // Показываем полный поп-ап
-            showWinModal(winnerIndex);
+            // ←←← 2 СЕКУНДЫ ЗАДЕРЖКИ ПЕРЕД ПОП-АПОМ
+            setTimeout(() => {
+              showWinModal(winnerIndex);
+            }, 2000);
 
             spinsDone++;
 
-            // Если это не последний спин — закрываем поп-ап через 5 секунд и запускаем следующий
             if (spinsDone < spinsCount && currentPrizes.length > 0) {
               setTimeout(() => {
-                closeWinModal();           // закрываем поп-ап
-                doOneSpin();               // сразу следующий спин
+                closeWinModal();
+                doOneSpin();
               }, 5000);
             } else {
               isSpinning = false;
@@ -336,7 +334,6 @@
       doOneSpin();
     }
 
-    // Кнопки
     document.getElementById('spinSilver').addEventListener('click', () => showNameModal(1));
     document.getElementById('spinGold').addEventListener('click', () => showNameModal(2));
     document.getElementById('spinPlatinum').addEventListener('click', () => showNameModal(3));
