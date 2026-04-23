@@ -32,17 +32,12 @@
     canvas {
       border: 24px solid #ffd700;
       border-radius: 50%;
-      box-shadow: 
-        0 0 100px #ffd700,
-        0 0 160px rgba(255,0,204,0.8),
-        inset 0 0 90px rgba(255,255,255,0.5);
+      box-shadow: 0 0 100px #ffd700, 0 0 160px rgba(255,0,204,0.8), inset 0 0 90px rgba(255,255,255,0.5);
       background: #000;
       max-width: 100%;
       height: auto;
     }
-    .controls {
-      margin: 45px 0 30px;
-    }
+    .controls { margin: 45px 0 30px; }
     button {
       margin: 10px 12px;
       padding: 18px 42px;
@@ -57,7 +52,6 @@
     #spinSilver { background: linear-gradient(#c0c0c0, #555); color: #000; }
     #spinGold   { background: linear-gradient(#ffd700, #ffaa00); color: #111; }
     #spinPlatinum { background: linear-gradient(#f0f0f0, #999); color: #111; }
-
     button:hover:not(:disabled) { transform: scale(1.1) translateY(-5px); }
     button:disabled { opacity: 0.45; cursor: not-allowed; }
 
@@ -141,24 +135,24 @@
         ctx.lineWidth = 12;
         ctx.stroke();
 
-        // Текст — ровно и красиво
+        // УЛУЧШЕННЫЙ ТЕКСТ (ровнее и читаемее)
         ctx.save();
         ctx.translate(centerX, centerY);
         ctx.rotate(angle + arc / 2);
         ctx.textAlign = "center";
         ctx.fillStyle = "#111";
-        ctx.font = "bold 21px Arial";
+        ctx.font = "bold 22px Arial";
         ctx.shadowColor = "#fff";
-        ctx.shadowBlur = 10;
+        ctx.shadowBlur = 12;
 
         const lines = prize.name.split(' ');
         lines.forEach((line, idx) => {
-          ctx.fillText(line, 0, -radius * 0.48 + idx * 29);
+          ctx.fillText(line, 0, -radius * 0.52 + idx * 30);
         });
         ctx.restore();
       });
 
-      // Золотая внешняя рамка
+      // Золотая рамка
       ctx.shadowColor = "#ffd700";
       ctx.shadowBlur = 50;
       ctx.beginPath();
@@ -177,16 +171,16 @@
       ctx.font = "bold 52px Arial";
       ctx.fillText("✦", centerX, centerY + 18);
 
-      // СТРЕЛКА ВНУТРЬ КОЛЕСА (остриём вниз)
+      // СТРЕЛКА ОСТРИЁМ ВНУТРЬ (вниз к секторам)
       ctx.save();
       ctx.translate(centerX, centerY);
       ctx.beginPath();
       ctx.fillStyle = "#ffd700";
       ctx.shadowColor = "#ffd700";
-      ctx.shadowBlur = 35;
-      ctx.moveTo(0, -radius - 55);     // остриё
-      ctx.lineTo(-42, -radius + 25);   // левая часть
-      ctx.lineTo(42, -radius + 25);    // правая часть
+      ctx.shadowBlur = 40;
+      ctx.moveTo(0, -radius - 68);     // остриё (вниз внутрь)
+      ctx.lineTo(-45, -radius - 5);    // левая сторона
+      ctx.lineTo(45, -radius - 5);     // правая сторона
       ctx.closePath();
       ctx.fill();
       ctx.restore();
@@ -231,9 +225,8 @@
         rotation = totalRotation * ease;
         drawWheel();
 
-        if (progress < 1) {
-          requestAnimationFrame(animate);
-        } else {
+        if (progress < 1) requestAnimationFrame(animate);
+        else {
           rotation = totalRotation;
           drawWheel();
 
