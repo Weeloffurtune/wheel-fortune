@@ -207,7 +207,7 @@
       winTitle.innerHTML = `Congratulations, <strong>${currentAgent}</strong>!`;
       winText.innerHTML = fullPrizeText;
 
-      const isLastSpin = remainingSpins <= 1;
+      const isLastSpin = remainingSpins === 0;
 
       if (isLastSpin) {
         winButton.textContent = "Claim Reward";
