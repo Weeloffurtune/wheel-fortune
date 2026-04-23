@@ -145,6 +145,7 @@
     let currentAgent = "";
     let currentSpinsCount = 1;
     let spinsDone = 0;
+    let isSpinning = false;
 
     let shortPrizes = [
       { name: "💰 €50 cash", color: "#FF6B6B" },
@@ -172,7 +173,6 @@
     const centerY = canvas.height / 2;
     const radius = 335;
     let rotation = 0;
-    let isSpinning = false;
 
     function launchConfetti() {
       const colors = ['#ffd700', '#ff00cc', '#00ffff', '#7CFF2E', '#FF2D55'];
@@ -204,7 +204,7 @@
     function startSpin() {
       currentAgent = agentInput.value.trim() || "Agent";
       nameModal.style.display = 'none';
-      spinWheel(currentSpinsCount);
+      spinWheel();
     }
 
     function showWinModal(prizeIndex) {
@@ -215,15 +215,13 @@
       const isLastSpin = spinsDone >= currentSpinsCount || currentPrizes.length === 0;
 
       if (currentSpinsCount === 1) {
-        // Silver
         winButton.textContent = "Claim Reward";
         winButton.onclick = closeWinModal;
       } else {
-        // Gold / Platinum
         winButton.textContent = "Next Spin →";
         winButton.onclick = () => {
           closeWinModal();
-          if (!isLastSpin) doOneSpin();   // запускаем следующий спин вручную
+          if (!isLastSpin) spinWheel();   // запускаем следующий спин
         };
       }
 
@@ -290,58 +288,56 @@
       ctx.restore();
     }
 
-    function spinWheel(spinsCount) {
+    function spinWheel() {
       if (isSpinning || currentPrizes.length === 0) return;
       isSpinning = true;
       resultDiv.textContent = "Spinning...";
-      spinsDone = 0;
 
-      function doOneSpin() {
-        const totalRotations = 6 + Math.random() * 5;
-        const extraAngle = Math.random() * 2 * Math.PI;
-        const targetRotation = rotation + totalRotations * 2 * Math.PI + extraAngle;
+      const totalRotations = 6 + Math.random() * 5;
+      const extraAngle = Math.random() * 2 * Math.PI;
+      const targetRotation = rotation + totalRotations * 2 * Math.PI + extraAngle;
 
-        let startTime = Date.now();
-        const duration = 4300;
+      let startTime = Date.now();
+      const duration = 4300;
 
-        function animate() {
-          const elapsed = Date.now() - startTime;
-          const progress = Math.min(elapsed / duration, 1);
-          const ease = 1 - Math.pow(1 - progress, 4);
+      function animate() {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const ease = 1 - Math.pow(1 - progress, 4);
 
-          rotation = targetRotation * ease;
+        rotation = targetRotation * ease;
+        drawWheel();
+
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        } else {
+          rotation = targetRotation;
           drawWheel();
 
-          if (progress < 1) {
-            requestAnimationFrame(animate);
-          } else {
-            rotation = targetRotation;
-            drawWheel();
+          const normalized = (rotation % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
+          const index = Math.floor((2 * Math.PI - normalized) / (2 * Math.PI / currentPrizes.length)) % currentPrizes.length;
 
-            const normalized = (rotation % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
-            const index = Math.floor((2 * Math.PI - normalized) / (2 * Math.PI / currentPrizes.length)) % currentPrizes.length;
+          const winnerShort = currentPrizes[index];
+          const winnerIndex = shortPrizes.findIndex(p => p.name === winnerShort.name);
 
-            const winnerShort = currentPrizes[index];
-            const winnerIndex = shortPrizes.findIndex(p => p.name === winnerShort.name);
+          resultDiv.innerHTML = `🎉 <strong>${winnerShort.name}</strong>`;
 
-            resultDiv.innerHTML = `🎉 <strong>${winnerShort.name}</strong>`;
+          currentPrizes.splice(index, 1);
+          countSpan.textContent = currentPrizes.length;
 
-            currentPrizes.splice(index, 1);
-            countSpan.textContent = currentPrizes.length;
+          // 2 секунды задержки перед поп-апом
+          setTimeout(() => {
+            showWinModal(winnerIndex);
+          }, 2000);
 
-            // 2 секунды задержки перед поп-апом
-            setTimeout(() => {
-              showWinModal(winnerIndex);
-            }, 2000);
-
-            spinsDone++;
-          }
+          spinsDone++;
+          isSpinning = false;
         }
-        animate();
       }
-      doOneSpin();
+      animate();
     }
 
+    // Кнопки
     document.getElementById('spinSilver').addEventListener('click', () => showNameModal(1));
     document.getElementById('spinGold').addEventListener('click', () => showNameModal(2));
     document.getElementById('spinPlatinum').addEventListener('click', () => showNameModal(3));
