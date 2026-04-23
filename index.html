@@ -169,7 +169,7 @@
     const radius = 335;
     let rotation = 0;
 
-    // 🔥 Crazy Time эффекты
+    // Crazy Time эффекты
     let pointerBounce = 0;
     let lastTick = 0;
 
@@ -231,21 +231,37 @@
       if (total === 0) return;
       const arc = (2 * Math.PI) / total;
 
-      // Сегменты
+      // === СЕГМЕНТЫ + ТЕКСТ ===
       currentPrizes.forEach((prize, i) => {
         const angle = rotation + arc * i;
+
+        // Цветной сектор
         ctx.beginPath();
         ctx.fillStyle = prize.color;
         ctx.moveTo(centerX, centerY);
         ctx.arc(centerX, centerY, radius, angle, angle + arc);
         ctx.closePath();
         ctx.fill();
+
         ctx.strokeStyle = "#111";
         ctx.lineWidth = 16;
         ctx.stroke();
+
+        // 🔥 ТЕКСТ ПРИЗА (вернули!)
+        ctx.save();
+        ctx.translate(centerX, centerY);
+        ctx.rotate(angle + arc / 2);
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillStyle = "#111";
+        ctx.font = "bold 19px 'Trebuchet MS', Arial";
+        ctx.shadowColor = "#fff";
+        ctx.shadowBlur = 12;
+        ctx.fillText(prize.name, radius - 132, -6);
+        ctx.restore();
       });
 
-      // 🔴 Красные пины (как в Crazy Time)
+      // 🔴 Красные пины (Crazy Time стиль)
       const pinCount = currentPrizes.length * 2;
       const pinRadius = radius + 18;
       ctx.shadowColor = "#ff3333";
@@ -260,7 +276,6 @@
         ctx.fillStyle = "#ff2d2d";
         ctx.fill();
 
-        // маленький блик на пине
         ctx.shadowBlur = 0;
         ctx.fillStyle = "#ff7777";
         ctx.beginPath();
@@ -281,7 +296,7 @@
       ctx.textBaseline = "middle";
       ctx.fillText("SPIN", centerX, centerY);
 
-      // Стрелка с эффектом отскока
+      // Стрелка с отскоком
       ctx.save();
       ctx.translate(centerX + radius + 48 + pointerBounce, centerY);
       ctx.fillStyle = "#ffd700";
@@ -295,7 +310,7 @@
       ctx.fill();
       ctx.restore();
 
-      // Плавное возвращение стрелки
+      // Плавное затухание отскока
       pointerBounce *= 0.78;
       if (pointerBounce < 0.6) pointerBounce = 0;
     }
@@ -318,15 +333,14 @@
         const ease = 1 - Math.pow(1 - progress, 4);
         rotation = targetRotation * ease;
 
-        // 🎰 Детекция пинов + отскок + звук
+        // Детекция пинов + отскок + звук
         const pinStep = (2 * Math.PI) / (currentPrizes.length * 2);
         const currentTick = Math.floor(rotation / pinStep);
 
         if (currentTick !== lastTick) {
           lastTick = currentTick;
-          pointerBounce = 12; // мощный щелчок
+          pointerBounce = 12;
 
-          // Звук клика (как в Crazy Time)
           try {
             const click = new Audio('https://www.soundjay.com/mechanical/sounds/mechanical-clonk-1.mp3');
             click.volume = 0.25;
