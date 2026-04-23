@@ -6,7 +6,7 @@
   <title>Lucky Spin Rewards</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Impact:wght@400;700&family=Trebuchet+MS:wght@400;700&display=swap');
-    
+   
     body {
       font-family: 'Trebuchet MS', Arial, sans-serif;
       background: linear-gradient(135deg, #0f0f1a, #1a1a2e);
@@ -45,14 +45,13 @@
     }
     #spinSilver { background: #c0c0c0; color: #111; }
     #spinGold { background: #ffd700; color: #111; }
-    #spinPlatinum { 
-      background: linear-gradient(135deg, #e0e0ff, #a0a0ff, #c0c0ff); 
-      color: #111; 
+    #spinPlatinum {
+      background: linear-gradient(135deg, #e0e0ff, #a0a0ff, #c0c0ff);
+      color: #111;
       box-shadow: 0 0 20px rgba(160, 160, 255, 0.6);
     }
     button:hover:not(:disabled) { transform: scale(1.08); }
     button:disabled { opacity: 0.5; cursor: not-allowed; }
-
     #nameModal, #winModal {
       display: none;
       position: fixed;
@@ -96,15 +95,15 @@
 <body>
   <div class="container" style="max-width: 780px; margin: 0 auto;">
     <h1>Lucky Spin Rewards</h1>
-   
+  
     <canvas id="wheel" width="780" height="780"></canvas>
-   
+  
     <div class="controls">
       <button id="spinSilver">Silver (1 spin)</button>
       <button id="spinGold">Gold (2 spins)</button>
       <button id="spinPlatinum">Platinum (3 spins)</button>
     </div>
-   
+  
     <div id="result"></div>
     <div class="remaining">Remaining prizes: <span id="count">7</span></div>
   </div>
@@ -170,6 +169,10 @@
     const radius = 335;
     let rotation = 0;
 
+    // 🔥 Crazy Time эффекты
+    let pointerBounce = 0;
+    let lastTick = 0;
+
     function launchConfetti() {
       const colors = ['#ffd700', '#ff00cc', '#00ffff', '#7CFF2E', '#FF2D55'];
       for (let i = 0; i < 220; i++) {
@@ -206,20 +209,14 @@
       const fullPrizeText = fullPrizes[prizeIndex];
       winTitle.innerHTML = `Congratulations, <strong>${currentAgent}</strong>!`;
       winText.innerHTML = fullPrizeText;
-
       const isLastSpin = remainingSpins === 0;
-
       if (isLastSpin) {
         winButton.textContent = "Claim Reward";
         winButton.onclick = closeWinModal;
       } else {
         winButton.textContent = "Next Spin →";
-        winButton.onclick = () => {
-          closeWinModal();
-          spinWheel();
-        };
+        winButton.onclick = () => { closeWinModal(); spinWheel(); };
       }
-
       winModal.style.display = 'flex';
       launchConfetti();
     }
@@ -234,6 +231,7 @@
       if (total === 0) return;
       const arc = (2 * Math.PI) / total;
 
+      // Сегменты
       currentPrizes.forEach((prize, i) => {
         const angle = rotation + arc * i;
         ctx.beginPath();
@@ -245,32 +243,47 @@
         ctx.strokeStyle = "#111";
         ctx.lineWidth = 16;
         ctx.stroke();
-
-        ctx.save();
-        ctx.translate(centerX, centerY);
-        ctx.rotate(angle + arc / 2);
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillStyle = "#111";
-        ctx.font = "bold 19px 'Trebuchet MS', Arial";
-        ctx.shadowColor = "#fff";
-        ctx.shadowBlur = 12;
-        ctx.fillText(prize.name, radius - 132, -6);
-        ctx.restore();
       });
 
+      // 🔴 Красные пины (как в Crazy Time)
+      const pinCount = currentPrizes.length * 2;
+      const pinRadius = radius + 18;
+      ctx.shadowColor = "#ff3333";
+      ctx.shadowBlur = 15;
+      for (let i = 0; i < pinCount; i++) {
+        const angle = rotation + (i * 2 * Math.PI / pinCount);
+        const x = centerX + Math.cos(angle) * pinRadius;
+        const y = centerY + Math.sin(angle) * pinRadius;
+
+        ctx.beginPath();
+        ctx.arc(x, y, 7, 0, Math.PI * 2);
+        ctx.fillStyle = "#ff2d2d";
+        ctx.fill();
+
+        // маленький блик на пине
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = "#ff7777";
+        ctx.beginPath();
+        ctx.arc(x - 2, y - 2, 2.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.shadowBlur = 0;
+
+      // Центр
       ctx.beginPath();
       ctx.fillStyle = "#111";
       ctx.arc(centerX, centerY, 65, 0, Math.PI * 2);
       ctx.fill();
+
       ctx.fillStyle = "#ffd700";
       ctx.font = "bold 48px Arial";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillText("SPIN", centerX, centerY);
 
+      // Стрелка с эффектом отскока
       ctx.save();
-      ctx.translate(centerX + radius + 32, centerY);
+      ctx.translate(centerX + radius + 48 + pointerBounce, centerY);
       ctx.fillStyle = "#ffd700";
       ctx.shadowColor = "#fff";
       ctx.shadowBlur = 25;
@@ -281,6 +294,10 @@
       ctx.closePath();
       ctx.fill();
       ctx.restore();
+
+      // Плавное возвращение стрелки
+      pointerBounce *= 0.78;
+      if (pointerBounce < 0.6) pointerBounce = 0;
     }
 
     function spinWheel() {
@@ -299,8 +316,24 @@
         const elapsed = Date.now() - startTime;
         const progress = Math.min(elapsed / duration, 1);
         const ease = 1 - Math.pow(1 - progress, 4);
-
         rotation = targetRotation * ease;
+
+        // 🎰 Детекция пинов + отскок + звук
+        const pinStep = (2 * Math.PI) / (currentPrizes.length * 2);
+        const currentTick = Math.floor(rotation / pinStep);
+
+        if (currentTick !== lastTick) {
+          lastTick = currentTick;
+          pointerBounce = 12; // мощный щелчок
+
+          // Звук клика (как в Crazy Time)
+          try {
+            const click = new Audio('https://www.soundjay.com/mechanical/sounds/mechanical-clonk-1.mp3');
+            click.volume = 0.25;
+            click.play().catch(() => {});
+          } catch(e) {}
+        }
+
         drawWheel();
 
         if (progress < 1) {
@@ -316,14 +349,10 @@
           const winnerIndex = shortPrizes.findIndex(p => p.name === winnerShort.name);
 
           resultDiv.innerHTML = `🎉 <strong>${winnerShort.name}</strong>`;
-
           currentPrizes.splice(index, 1);
           countSpan.textContent = currentPrizes.length;
 
-          setTimeout(() => {
-            showWinModal(winnerIndex);
-          }, 2000);
-
+          setTimeout(() => showWinModal(winnerIndex), 2000);
           remainingSpins--;
           isSpinning = false;
         }
