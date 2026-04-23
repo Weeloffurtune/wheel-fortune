@@ -143,8 +143,7 @@
     const winButton = document.getElementById('winButton');
 
     let currentAgent = "";
-    let currentSpinsCount = 1;
-    let spinsDone = 0;
+    let remainingSpins = 0;        // ← сколько спинов ещё нужно сделать
     let isSpinning = false;
 
     let shortPrizes = [
@@ -194,8 +193,7 @@
     }
 
     function showNameModal(spinsCount) {
-      currentSpinsCount = spinsCount;
-      spinsDone = 0;
+      remainingSpins = spinsCount;
       agentInput.value = "";
       nameModal.style.display = 'flex';
       agentInput.focus();
@@ -212,16 +210,18 @@
       winTitle.innerHTML = `Congratulations, <strong>${currentAgent}</strong>!`;
       winText.innerHTML = fullPrizeText;
 
-      const isLastSpin = spinsDone >= currentSpinsCount || currentPrizes.length === 0;
+      const isLastSpin = remainingSpins <= 1;
 
-      if (currentSpinsCount === 1) {
+      if (remainingSpins === 1) {
+        // Silver
         winButton.textContent = "Claim Reward";
         winButton.onclick = closeWinModal;
       } else {
+        // Gold / Platinum
         winButton.textContent = "Next Spin →";
         winButton.onclick = () => {
           closeWinModal();
-          if (!isLastSpin) spinWheel();   // запускаем следующий спин
+          if (remainingSpins > 1) spinWheel();
         };
       }
 
@@ -330,7 +330,7 @@
             showWinModal(winnerIndex);
           }, 2000);
 
-          spinsDone++;
+          remainingSpins--;
           isSpinning = false;
         }
       }
