@@ -126,7 +126,7 @@
     <div class="modal-content">
       <h2 id="winTitle">Congratulations!</h2>
       <p id="winText" style="font-size:1.35em; line-height:1.5;"></p>
-      <button onclick="closeWinModal()">OK</button>
+      <button id="winButton">OK</button>
     </div>
   </div>
 
@@ -140,9 +140,11 @@
     const agentInput = document.getElementById('agentInput');
     const winTitle = document.getElementById('winTitle');
     const winText = document.getElementById('winText');
+    const winButton = document.getElementById('winButton');
 
     let currentAgent = "";
     let currentSpinsCount = 1;
+    let spinsDone = 0;
 
     let shortPrizes = [
       { name: "💰 €50 cash", color: "#FF6B6B" },
@@ -193,6 +195,7 @@
 
     function showNameModal(spinsCount) {
       currentSpinsCount = spinsCount;
+      spinsDone = 0;
       agentInput.value = "";
       nameModal.style.display = 'flex';
       agentInput.focus();
@@ -204,10 +207,22 @@
       spinWheel(currentSpinsCount);
     }
 
-    function showWinModal(prizeIndex) {
+    function showWinModal(prizeIndex, isLastSpin) {
       const fullPrizeText = fullPrizes[prizeIndex];
       winTitle.innerHTML = `Congratulations, <strong>${currentAgent}</strong>!`;
       winText.innerHTML = fullPrizeText;
+
+      if (isLastSpin) {
+        winButton.textContent = "OK";
+        winButton.onclick = closeWinModal;
+      } else {
+        winButton.textContent = "Next Spin →";
+        winButton.onclick = () => {
+          closeWinModal();
+          doOneSpin();   // сразу следующий спин
+        };
+      }
+
       winModal.style.display = 'flex';
       launchConfetti();
     }
@@ -276,8 +291,7 @@
       if (isSpinning || currentPrizes.length === 0) return;
       isSpinning = true;
       resultDiv.textContent = "Spinning...";
-
-      let spinsDone = 0;
+      spinsDone = 0;
 
       function doOneSpin() {
         const totalRotations = 6 + Math.random() * 5;
@@ -312,21 +326,13 @@
             currentPrizes.splice(index, 1);
             countSpan.textContent = currentPrizes.length;
 
-            // ←←← 2 СЕКУНДЫ ЗАДЕРЖКИ ПЕРЕД ПОП-АПОМ
+            // 2 секунды задержки перед поп-апом
             setTimeout(() => {
-              showWinModal(winnerIndex);
+              const isLastSpin = spinsDone + 1 >= spinsCount || currentPrizes.length === 0;
+              showWinModal(winnerIndex, isLastSpin);
             }, 2000);
 
             spinsDone++;
-
-            if (spinsDone < spinsCount && currentPrizes.length > 0) {
-              setTimeout(() => {
-                closeWinModal();
-                doOneSpin();
-              }, 5000);
-            } else {
-              isSpinning = false;
-            }
           }
         }
         animate();
