@@ -3,90 +3,83 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>КОЛЕСО КВАРТАЛЬНЫХ БОНУСОВ</title>
+  <title>🎡 Fortune Wheel — Квартальные Бонусы</title>
   <style>
     body {
-      font-family: system-ui, -apple-system, Arial, sans-serif;
-      background: radial-gradient(circle at center, #1a0033, #0a001a);
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #0f0f1a, #1a1a2e);
       color: #fff;
       text-align: center;
-      padding: 20px;
+      padding: 30px 20px;
       margin: 0;
       min-height: 100vh;
-      overflow: hidden;
     }
     h1 {
-      font-size: 3.2em;
-      margin: 15px 0 8px;
-      background: linear-gradient(90deg, #ffd700, #ff00cc, #00ffff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      text-shadow: 0 0 50px rgba(255,215,0,0.9);
+      font-size: 2.8em;
+      margin: 10px 0 5px;
+      text-shadow: 0 0 20px #ffd700;
+      color: #ffd700;
     }
     .subtitle {
-      font-size: 1.5em;
-      color: #ccc;
-      letter-spacing: 3px;
-      margin-bottom: 25px;
+      font-size: 1.3em;
+      color: #aaa;
+      margin-bottom: 30px;
     }
     canvas {
-      border: 22px solid #ffd700;
+      border: 14px solid #ffd700;
       border-radius: 50%;
-      box-shadow: 
-        0 0 90px #ffd700,
-        0 0 140px rgba(255,0,204,0.7),
-        inset 0 0 80px rgba(255,255,255,0.5);
+      box-shadow: 0 0 60px rgba(255, 215, 0, 0.9),
+                  inset 0 0 40px rgba(255,255,255,0.3);
       background: #000;
       max-width: 100%;
       height: auto;
     }
     .controls {
-      margin: 45px 0 30px;
+      margin: 40px 0 20px;
     }
     button {
-      margin: 10px 12px;
-      padding: 18px 40px;
-      font-size: 24px;
-      font-weight: 800;
+      margin: 8px;
+      padding: 14px 32px;
+      font-size: 22px;
+      font-weight: bold;
       border: none;
       border-radius: 50px;
       cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 12px 35px rgba(0,0,0,0.6);
+      transition: all 0.3s;
     }
-    #spinSilver { background: linear-gradient(#c0c0c0, #555); color: #000; }
-    #spinGold   { background: linear-gradient(#ffd700, #ffaa00); color: #111; }
-    #spinPlatinum { background: linear-gradient(#f0f0f0, #999); color: #111; }
+    #spinSilver { background: #a8a8a8; color: #000; }
+    #spinGold   { background: #ffd700; color: #000; }
+    #spinPlatinum { background: linear-gradient(#e5e5e5, #b0b0b0); color: #000; }
 
-    button:hover:not(:disabled) { transform: scale(1.1) translateY(-5px); }
-    button:disabled { opacity: 0.45; cursor: not-allowed; }
+    button:hover { transform: scale(1.08); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+    button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
     #result {
-      margin-top: 25px;
-      font-size: 2.6em;
+      margin-top: 30px;
+      font-size: 2em;
       font-weight: bold;
-      min-height: 85px;
-      text-shadow: 0 0 35px #ffd700;
+      min-height: 70px;
+      text-shadow: 0 0 15px #ffd700;
     }
     .remaining {
-      font-size: 1.4em;
-      color: #aaa;
-      margin-top: 10px;
+      margin-top: 20px;
+      font-size: 1.1em;
+      color: #ccc;
     }
-    .container { max-width: 720px; margin: 0 auto; }
+    .container { max-width: 680px; margin: 0 auto; }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>КОЛЕСО КВАРТАЛЬНЫХ БОНУСОВ</h1>
-    <p class="subtitle">NEON LUXE • LAST WEEKLY MEETING</p>
+    <h1>🎡 Fortune Wheel</h1>
+    <p class="subtitle">Квартальные бонусы — последний weekly митинг</p>
     
-    <canvas id="wheel" width="680" height="680"></canvas>
+    <canvas id="wheel" width="560" height="560"></canvas>
 
     <div class="controls">
-      <button id="spinSilver">Silver — 1 спин</button>
-      <button id="spinGold">Gold — 2 спина</button>
-      <button id="spinPlatinum">Platinum — 3 спина</button>
+      <button id="spinSilver">Silver Wheel (1 спин)</button>
+      <button id="spinGold">Gold Wheel (2 спина)</button>
+      <button id="spinPlatinum">Platinum Wheel (3 спина)</button>
     </div>
 
     <div id="result"></div>
@@ -99,167 +92,71 @@
     const resultDiv = document.getElementById('result');
     const remainingDiv = document.getElementById('remaining');
 
+    // Призы — можно менять текст и добавлять новые
     let prizes = [
-      { name: "💰 €50 cash", color: "#FF2D55" },
-      { name: "🍔 3 food deliveries", color: "#00D4FF" },
-      { name: "🏖️ 2 extra days off", color: "#7CFF2E" },
-      { name: "💆 3 massage sessions", color: "#FF9F2E" },
-      { name: "🤖 1-month AI sub", color: "#C724FF" },
-      { name: "🎟️ €75 gift card", color: "#FFEE00" },
-      { name: "🎬 Cinema deluxe", color: "#00FF9F" }
+      { name: "€50 cash",                  color: "#FF6B6B" },
+      { name: "3 food deliveries",         color: "#4ECDC4" },
+      { name: "2 extra days off",          color: "#45B7D1" },
+      { name: "3 full-body massage",       color: "#96CEB4" },
+      { name: "1-month AI subscription\n(ChatGPT / Claude / Grok)", color: "#FFEEAD" },
+      { name: "Universal gift card €75",   color: "#D4A5A5" },
+      { name: "Cinema / Theatre deluxe",   color: "#FF9FF3" }
     ];
 
-    let currentPrizes = [...prizes];
-    let rotation = 0;
-    let isSpinning = false;
+    let currentPrizes = [...prizes]; // рабочая копия (призы будут удаляться)
 
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
-    const radius = 290;
+    const radius = 245;
+
+    let rotation = 0;
+    let isSpinning = false;
 
     function drawWheel() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       const total = currentPrizes.length;
       if (total === 0) return;
+
       const arc = (2 * Math.PI) / total;
 
       currentPrizes.forEach((prize, i) => {
         const angle = rotation + arc * i;
 
-        // Красивый градиент сектора
-        const grad = ctx.createRadialGradient(centerX, centerY, radius * 0.3, centerX, centerY, radius);
-        grad.addColorStop(0, '#ffffff');
-        grad.addColorStop(1, prize.color);
-        ctx.fillStyle = grad;
+        // Сектор
         ctx.beginPath();
+        ctx.fillStyle = prize.color;
         ctx.moveTo(centerX, centerY);
         ctx.arc(centerX, centerY, radius, angle, angle + arc);
         ctx.closePath();
         ctx.fill();
 
-        ctx.strokeStyle = '#111';
-        ctx.lineWidth = 10;
+        ctx.strokeStyle = "#111";
+        ctx.lineWidth = 8;
         ctx.stroke();
 
-        // Текст (читаемый!)
+        // Текст приза
         ctx.save();
         ctx.translate(centerX, centerY);
-        ctx.rotate(angle + arc / 2 + Math.PI / 2); // поворот для читаемости
-        ctx.textAlign = "center";
-        ctx.fillStyle = "#111";
-        ctx.font = "bold 21px Arial";
+        ctx.rotate(angle + arc / 2);
+        ctx.textAlign = "right";
+        ctx.fillStyle = "#000";
+        ctx.font = "bold 18px Arial";
         ctx.shadowColor = "#fff";
-        ctx.shadowBlur = 12;
+        ctx.shadowBlur = 6;
 
-        const lines = prize.name.split(' ');
+        const lines = prize.name.split('\n');
         lines.forEach((line, idx) => {
-          ctx.fillText(line, 0, -radius * 0.38 + idx * 28);
+          ctx.fillText(line, radius - 40, 8 + idx * 22);
         });
         ctx.restore();
       });
 
-      // Внешнее золотое кольцо
-      ctx.shadowColor = "#ffd700";
-      ctx.shadowBlur = 45;
+      // Золотая центральная кнопка + указатель сверху
       ctx.beginPath();
-      ctx.arc(centerX, centerY, radius + 32, 0, Math.PI * 2);
-      ctx.lineWidth = 28;
-      ctx.strokeStyle = "#ffd700";
-      ctx.stroke();
-      ctx.shadowBlur = 0;
-
-      // Центр
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, 58, 0, Math.PI * 2);
       ctx.fillStyle = "#111";
+      ctx.arc(centerX, centerY, 50, 0, Math.PI * 2);
       ctx.fill();
+
       ctx.fillStyle = "#ffd700";
-      ctx.font = "bold 48px Arial";
-      ctx.fillText("✦", centerX, centerY + 16);
-
-      // ФИКСИРОВАННАЯ СТРЕЛКА СВЕРХУ
-      ctx.save();
-      ctx.translate(centerX, centerY);
-      ctx.beginPath();
-      ctx.fillStyle = "#ffd700";
-      ctx.shadowColor = "#ffd700";
-      ctx.shadowBlur = 30;
-      ctx.moveTo(0, -radius - 48);
-      ctx.lineTo(-38, -radius + 15);
-      ctx.lineTo(38, -radius + 15);
-      ctx.closePath();
-      ctx.fill();
-      ctx.restore();
-    }
-
-    function launchConfetti() {
-      const colors = ['#ffd700', '#ff00cc', '#00ffff', '#7CFF2E', '#FF2D55'];
-      for (let i = 0; i < 180; i++) {
-        setTimeout(() => {
-          const c = document.createElement('div');
-          c.style.position = 'fixed';
-          c.style.left = Math.random() * 100 + 'vw';
-          c.style.top = '-20px';
-          c.style.width = '14px';
-          c.style.height = '14px';
-          c.style.background = colors[Math.floor(Math.random() * colors.length)];
-          c.style.zIndex = '9999';
-          document.body.appendChild(c);
-          c.animate([{transform: 'translateY(0) rotate(0)'}, {transform: `translateY(${window.innerHeight + 200}px) rotate(${Math.random()*1200}deg)`}], {duration: 2800 + Math.random()*2200, easing: 'cubic-bezier(0.25,0.1,0.25,1)'});
-          setTimeout(() => c.remove(), 5000);
-        }, i * 1.2);
-      }
-    }
-
-    function spin() {
-      if (isSpinning || currentPrizes.length === 0) return;
-      isSpinning = true;
-      resultDiv.textContent = "КРУТИМ...";
-
-      const spins = 8 + Math.random() * 6;
-      const extra = Math.random() * 2 * Math.PI;
-      const totalRotation = rotation + spins * 2 * Math.PI + extra;
-
-      let start = Date.now();
-      const duration = 5200;
-
-      function animate() {
-        const elapsed = Date.now() - start;
-        const progress = Math.min(elapsed / duration, 1);
-        const ease = 1 - Math.pow(1 - progress, 4.5);
-
-        rotation = totalRotation * ease;
-        drawWheel();
-
-        if (progress < 1) {
-          requestAnimationFrame(animate);
-        } else {
-          rotation = totalRotation;
-          drawWheel();
-
-          const normalized = (rotation % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
-          const index = Math.floor((2 * Math.PI - normalized) / (2 * Math.PI / currentPrizes.length)) % currentPrizes.length;
-
-          const winner = currentPrizes[index];
-          resultDiv.innerHTML = `🎉 <strong>${winner.name}</strong>`;
-
-          currentPrizes.splice(index, 1);
-          remainingDiv.textContent = `Осталось призов: ${currentPrizes.length}`;
-
-          launchConfetti();
-          isSpinning = false;
-        }
-      }
-      animate();
-    }
-
-    // Запуск
-    drawWheel();
-    remainingDiv.textContent = `Осталось призов: ${currentPrizes.length}`;
-
-    document.getElementById('spinSilver').addEventListener('click', spin);
-    document.getElementById('spinGold').addEventListener('click', spin);
-    document.getElementById('spinPlatinum').addEventListener('click', spin);
-  </script>
-</body>
-</html>
+      ctx.font = "bold 42px Arial";
+      ctx.textAlign = "center
