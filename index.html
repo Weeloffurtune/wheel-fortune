@@ -95,7 +95,6 @@
     let rotation = 0;
     let isSpinning = false;
 
-    // Конфетти
     function launchConfetti() {
       const colors = ['#ffd700', '#ff00cc', '#00ffff', '#7CFF2E', '#FF2D55', '#ff8800'];
       for (let i = 0; i < 220; i++) {
@@ -108,16 +107,9 @@
           c.style.height = '13px';
           c.style.background = colors[Math.floor(Math.random() * colors.length)];
           c.style.zIndex = '9999';
-          c.style.opacity = Math.random() * 0.9 + 0.4;
           document.body.appendChild(c);
-
-          const duration = 2800 + Math.random() * 2200;
-          c.animate([
-            { transform: 'translateY(0) rotate(0deg)' },
-            { transform: `translateY(${window.innerHeight + 250}px) rotate(${Math.random() * 1200}deg)` }
-          ], { duration: duration, easing: 'cubic-bezier(0.25, 0.1, 0.25, 1)' });
-
-          setTimeout(() => c.remove(), duration);
+          c.animate([{ transform: 'translateY(0) rotate(0deg)' }, { transform: `translateY(${window.innerHeight + 250}px) rotate(${Math.random() * 1200}deg)` }], { duration: 2800 + Math.random() * 2200, easing: 'cubic-bezier(0.25, 0.1, 0.25, 1)' });
+          setTimeout(() => c.remove(), 5000);
         }, i * 1.5);
       }
     }
@@ -141,17 +133,17 @@
         ctx.lineWidth = 16;
         ctx.stroke();
 
-        // Твой любимый горизонтальный текст
+        // ИСПРАВЛЕННЫЙ ТЕКСТ: ближе к центру + чуть выше
         ctx.save();
         ctx.translate(centerX, centerY);
         ctx.rotate(angle + arc / 2);
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillStyle = "#111";
-        ctx.font = "bold 21px Arial";
+        ctx.font = "bold 19px Arial";           // чуть меньше шрифт
         ctx.shadowColor = "#fff";
         ctx.shadowBlur = 12;
-        ctx.fillText(prize.name, radius - 105, 0);
+        ctx.fillText(prize.name, radius - 132, -6);   // ← главное изменение
         ctx.restore();
       });
 
@@ -219,7 +211,7 @@
             currentPrizes.splice(index, 1);
             countSpan.textContent = currentPrizes.length;
 
-            launchConfetti();   // ← вот конфетти
+            launchConfetti();
 
             spinsDone++;
             if (spinsDone < spinsCount && currentPrizes.length > 0) {
