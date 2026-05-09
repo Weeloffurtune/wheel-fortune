@@ -6,7 +6,7 @@
   <title>Lucky Spin Rewards</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Impact:wght@400;700&family=Trebuchet+MS:wght@400;700&display=swap');
-  
+ 
     body {
       font-family: 'Trebuchet MS', Arial, sans-serif;
       background: linear-gradient(135deg, #0f0f1a, #1a1a2e);
@@ -21,7 +21,7 @@
       font-size: 3em;
       color: #ffd700;
       text-shadow: 0 0 40px #ffd700;
-      margin: 15px 0 48px;   /* ← чуть центральнее + больше воздуха снизу */
+      margin: 15px 0 48px; /* ← чуть центральнее + больше воздуха снизу */
       letter-spacing: 3px;
       position: relative;
     }
@@ -31,7 +31,7 @@
       box-shadow: 0 0 95px rgba(255, 215, 0, 0.95), inset 0 0 75px rgba(255,255,255,0.4);
       max-width: 100%;
       height: auto;
-      margin-top: 12px;   /* ← опустили колесо чуть ниже названия */
+      margin-top: 12px; /* ← опустили колесо чуть ниже названия */
     }
     .controls { margin: 45px 0 30px; }
     button {
@@ -92,7 +92,6 @@
       font-weight: bold;
       margin: 10px;
     }
-
     /* === Animated stars in left and right zones (только добавлено) === */
     @keyframes twinkle {
       0%, 100% { opacity: 0.3; transform: scale(0.7) rotate(0deg); }
@@ -127,23 +126,18 @@
 <body>
   <div class="container" style="max-width: 780px; margin: 0 auto;">
     <h1>Lucky Spin Rewards</h1>
- 
     <canvas id="wheel" width="780" height="780"></canvas>
- 
     <div class="controls">
       <button id="spinSilver">Silver (1 spin)</button>
       <button id="spinGold">Gold (2 spins)</button>
       <button id="spinPlatinum">Platinum (3 spins)</button>
     </div>
- 
     <div id="result"></div>
     <div class="remaining">Remaining prizes: <span id="count">7</span></div>
   </div>
-
   <!-- === Только добавлено: контейнеры для анимированных звёздочек слева и справа === -->
   <div class="stars-left" id="starsLeft"></div>
   <div class="stars-right" id="starsRight"></div>
-
   <div id="nameModal">
     <div class="modal-content">
       <h2>Who's spinning?</h2>
@@ -377,7 +371,6 @@
     document.getElementById('spinPlatinum').addEventListener('click', () => showNameModal(3));
     drawWheel();
     countSpan.textContent = currentPrizes.length;
-
     /* === Только добавлено: генерация анимированных звёздочек слева и справа === */
     function createAnimatedStars(containerId, count) {
       const container = document.getElementById(containerId);
@@ -388,12 +381,12 @@
         star.style.left = Math.random() * 100 + '%';
         star.style.top = Math.random() * 100 + '%';
         star.style.animationDelay = '-' + (Math.random() * 2.5) + 's';
-        star.style.fontSize = (14 + Math.random() * 28) + 'px';
+        star.style.fontSize = (14 + Math.random() * 22) + 'px';   /* ← чуть уменьшил самые большие звёзды */
         container.appendChild(star);
       }
     }
-    createAnimatedStars('starsLeft', 72);
-    createAnimatedStars('starsRight', 72);
+    createAnimatedStars('starsLeft', 62);   /* ← чуть уменьшил количество, но зоны теперь заполнены плотнее */
+    createAnimatedStars('starsRight', 62);
   </script>
 </body>
 </html>
