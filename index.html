@@ -23,6 +23,10 @@
       margin: 15px 0 48px;
       letter-spacing: 3px;
       position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
     }
     canvas {
       border: 24px solid #ffd700;
@@ -128,31 +132,24 @@
      right: 0;
     }
 
-    /* === ДВЕ ЗОЛОТЫЕ КОРОНЫ — ВЫРОВНЕНЫ ПО БОКАМ ОТ ЗАГОЛОВКА === */
+    /* === ДВЕ ЗОЛОТЫЕ КОРОНЫ — ИДЕАЛЬНО ПО БОКАМ НА УРОВНЕ ТЕКСТА === */
     .crown {
-      position: absolute;
-      top: 20px;
-      font-size: 56px;
+      font-size: 62px;
       line-height: 1;
-      width: 80px;
-      height: 60px;
-      text-align: center;
       color: #ffd700;
       text-shadow: 0 0 20px #ffd700, 0 0 40px #ffcc00, 0 0 60px #ffd700;
       z-index: 5;
       pointer-events: none;
     }
-    .crown-left {
-      left: max(20px, calc(50% - 290px));
-    }
-    .crown-right {
-      right: max(20px, calc(50% - 290px));
-    }
   </style>
 </head>
 <body>
   <div class="container" style="max-width: 780px; margin: 0 auto;">
-    <h1>Lucky Spin Rewards</h1>
+    <h1>
+      <span class="crown">👑</span>
+      Lucky Spin Rewards
+      <span class="crown">👑</span>
+    </h1>
     <canvas id="wheel" width="780" height="780"></canvas>
     <div class="controls">
       <button id="spinSilver">Silver (1 spin)</button>
@@ -165,9 +162,6 @@
   <!-- === Контейнеры для звёздочек === -->
   <div class="stars-left" id="starsLeft"></div>
   <div class="stars-right" id="starsRight"></div>
-  <!-- === КОРОНЫ === -->
-  <div class="crown crown-left">👑</div>
-  <div class="crown crown-right">👑</div>
   <div id="nameModal">
     <div class="modal-content">
       <h2>Who's spinning?</h2>
