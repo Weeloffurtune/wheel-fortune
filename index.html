@@ -6,7 +6,6 @@
   <title>Lucky Spin Rewards</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Impact:wght@400;700&family=Trebuchet+MS:wght@400;700&display=swap');
- 
     body {
       font-family: 'Trebuchet MS', Arial, sans-serif;
       background: linear-gradient(135deg, #0f0f1a, #1a1a2e);
@@ -92,7 +91,6 @@
       font-weight: bold;
       margin: 10px;
     }
-
     /* === Animated stars in left and right zones === */
     @keyframes twinkle {
      0%, 100% {
@@ -104,7 +102,6 @@
      transform: scale(1.35) rotate(15deg);
      }
     }
-
     .star {
      position: absolute;
      color: #ffd700;
@@ -114,22 +111,19 @@
      z-index: 2;
      pointer-events: none;
     }
-
     .stars-left,
     .stars-right {
      position: fixed;
      top: 0;
-     width: 600px;
+     width: 630px;
      height: 100%;
      pointer-events: none;
      z-index: 2;
      overflow: visible;
     }
-
     .stars-left {
      left: 0;
     }
-
     .stars-right {
      right: 0;
     }
@@ -168,15 +162,12 @@
     <div id="result"></div>
     <div class="remaining">Remaining prizes: <span id="count">7</span></div>
   </div>
-
   <!-- === Контейнеры для звёздочек === -->
   <div class="stars-left" id="starsLeft"></div>
   <div class="stars-right" id="starsRight"></div>
-
   <!-- === КОРОНЫ === -->
   <div class="crown crown-left">👑</div>
   <div class="crown crown-right">👑</div>
-
   <div id="nameModal">
     <div class="modal-content">
       <h2>Who's spinning?</h2>
@@ -193,7 +184,6 @@
       <button id="winButton">OK</button>
     </div>
   </div>
-
   <script>
     const canvas = document.getElementById('wheel');
     const ctx = canvas.getContext('2d');
@@ -211,10 +201,10 @@
     let shortPrizes = [
       { name: "💰 €50 cash", color: "#FF6B6B" },
       { name: "🍔 3 food deliveries", color: "#4ECDC4" },
-      { name: "🏖 2 extra days off", color: "#45B7D1" },
+      { name: "🏖️ 2 extra days off", color: "#45B7D1" },
       { name: "💆 3 massage", color: "#96CEB4" },
       { name: "🤖 1-month AI", color: "#FFEEAD" },
-      { name: "🎟 €75 gift card", color: "#D4A5A5" },
+      { name: "🎟️ €75 gift card", color: "#D4A5A5" },
       { name: "🎬 Cinema deluxe", color: "#FF9FF3" }
     ];
     const fullPrizes = [
@@ -234,7 +224,6 @@
     let rotation = 0;
     let pointerBounce = 0;
     let lastTick = 0;
-
     function launchConfetti() {
       const colors = ['#ffd700', '#ff00cc', '#00ffff', '#7CFF2E', '#FF2D55'];
       for (let i = 0; i < 220; i++) {
@@ -259,20 +248,17 @@
         }, i * 1.5);
       }
     }
-
     function showNameModal(spinsCount) {
       remainingSpins = spinsCount;
       agentInput.value = "";
       nameModal.style.display = 'flex';
       agentInput.focus();
     }
-
     function startSpin() {
       currentAgent = agentInput.value.trim() || "Agent";
       nameModal.style.display = 'none';
       spinWheel();
     }
-
     function showWinModal(prizeIndex) {
       const fullPrizeText = fullPrizes[prizeIndex];
       winTitle.innerHTML = `Congratulations, <strong>${currentAgent}</strong>!`;
@@ -288,11 +274,9 @@
       winModal.style.display = 'flex';
       launchConfetti();
     }
-
     function closeWinModal() {
       winModal.style.display = 'none';
     }
-
     function drawWheel() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       const total = currentPrizes.length;
@@ -309,7 +293,6 @@
         ctx.strokeStyle = "#111";
         ctx.lineWidth = 16;
         ctx.stroke();
-
         ctx.save();
         ctx.translate(centerX, centerY);
         ctx.rotate(angle + arc / 2);
@@ -322,7 +305,6 @@
         ctx.fillText(prize.name, radius - 132, -6);
         ctx.restore();
       });
-
       const pinCount = currentPrizes.length * 2;
       const pinRadius = radius + 18;
       ctx.shadowColor = "#ff3333";
@@ -342,7 +324,6 @@
         ctx.fill();
       }
       ctx.shadowBlur = 0;
-
       ctx.beginPath();
       ctx.fillStyle = "#111";
       ctx.arc(centerX, centerY, 65, 0, Math.PI * 2);
@@ -352,7 +333,6 @@
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillText("SPIN", centerX, centerY);
-
       ctx.save();
       ctx.translate(centerX + radius + 48 + pointerBounce, centerY);
       ctx.fillStyle = "#ffd700";
@@ -365,11 +345,9 @@
       ctx.closePath();
       ctx.fill();
       ctx.restore();
-
       pointerBounce *= 0.78;
       if (pointerBounce < 0.6) pointerBounce = 0;
     }
-
     function spinWheel() {
       if (isSpinning || currentPrizes.length === 0) return;
       isSpinning = true;
@@ -379,13 +357,11 @@
       const targetRotation = rotation + totalRotations * 2 * Math.PI + extraAngle;
       let startTime = Date.now();
       const duration = 4300;
-
       function animate() {
         const elapsed = Date.now() - startTime;
         const progress = Math.min(elapsed / duration, 1);
         const ease = 1 - Math.pow(1 - progress, 4);
         rotation = targetRotation * ease;
-
         const pinStep = (2 * Math.PI) / (currentPrizes.length * 2);
         const currentTick = Math.floor(rotation / pinStep);
         if (currentTick !== lastTick) {
@@ -397,9 +373,7 @@
             click.play().catch(() => {});
           } catch(e) {}
         }
-
         drawWheel();
-
         if (progress < 1) {
           requestAnimationFrame(animate);
         } else {
@@ -419,14 +393,11 @@
       }
       animate();
     }
-
     document.getElementById('spinSilver').addEventListener('click', () => showNameModal(1));
     document.getElementById('spinGold').addEventListener('click', () => showNameModal(2));
     document.getElementById('spinPlatinum').addEventListener('click', () => showNameModal(3));
-
     drawWheel();
     countSpan.textContent = currentPrizes.length;
-
     function createAnimatedStars(containerId, count) {
       const container = document.getElementById(containerId);
       container.innerHTML = '';
