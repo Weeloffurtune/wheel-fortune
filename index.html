@@ -134,21 +134,21 @@
      right: 0;
     }
 
-    /* === ДВЕ ЗОЛОТЫЕ КОРОНЫ — перемещены точно по твоим стрелкам === */
+    /* === ДВЕ ЗОЛОТЫЕ КОРОНЫ — ТОЧНО В КРАСНЫХ КВАДРАТАХ === */
     .crown {
       position: absolute;
-      top: 32px;               /* выше заголовка */
+      top: 52px;               /* высота точно под заголовком */
       font-size: 78px;
       color: #ffd700;
       text-shadow: 0 0 20px #ffd700, 0 0 40px #ffcc00, 0 0 60px #ffd700;
-      z-index: 5;              /* выше звёзд и всего остального */
+      z-index: 5;
       pointer-events: none;
     }
     .crown-left {
-      left: 48px;              /* дальше влево, как на стрелке */
+      left: 155px;             /* точно в левом красном квадрате */
     }
     .crown-right {
-      right: 48px;             /* дальше вправо, как на стрелке */
+      right: 155px;            /* точно в правом красном квадрате */
     }
   </style>
 </head>
@@ -169,7 +169,7 @@
   <div class="stars-left" id="starsLeft"></div>
   <div class="stars-right" id="starsRight"></div>
 
-  <!-- === ДВЕ КОРОНЫ (перемещены точно по стрелкам) === -->
+  <!-- === КОРОНЫ ТОЧНО В КРАСНЫХ КВАДРАТАХ === -->
   <div class="crown crown-left">👑</div>
   <div class="crown crown-right">👑</div>
 
