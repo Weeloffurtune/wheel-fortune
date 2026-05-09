@@ -134,21 +134,21 @@
      right: 0;
     }
 
-    /* === ДВЕ ЗОЛОТЫЕ КОРОНЫ (новое) === */
+    /* === ДВЕ ЗОЛОТЫЕ КОРОНЫ — перемещены точно по твоим стрелкам === */
     .crown {
       position: absolute;
-      top: 68px;               /* идеально под заголовком и над колесом */
-      font-size: 92px;
+      top: 32px;               /* выше заголовка */
+      font-size: 78px;
       color: #ffd700;
-      text-shadow: 0 0 25px #ffd700, 0 0 45px #ffcc00, 0 0 70px #ffd700;
-      z-index: 4;              /* выше звёзд */
+      text-shadow: 0 0 20px #ffd700, 0 0 40px #ffcc00, 0 0 60px #ffd700;
+      z-index: 5;              /* выше звёзд и всего остального */
       pointer-events: none;
     }
     .crown-left {
-      left: 85px;
+      left: 48px;              /* дальше влево, как на стрелке */
     }
     .crown-right {
-      right: 85px;
+      right: 48px;             /* дальше вправо, как на стрелке */
     }
   </style>
 </head>
@@ -169,7 +169,7 @@
   <div class="stars-left" id="starsLeft"></div>
   <div class="stars-right" id="starsRight"></div>
 
-  <!-- === ДВЕ ЗОЛОТЫЕ КОРОНЫ (добавлены) === -->
+  <!-- === ДВЕ КОРОНЫ (перемещены точно по стрелкам) === -->
   <div class="crown crown-left">👑</div>
   <div class="crown crown-right">👑</div>
 
@@ -417,7 +417,6 @@
     drawWheel();
     countSpan.textContent = currentPrizes.length;
 
-    /* === Генерация звёздочек === */
     function createAnimatedStars(containerId, count) {
       const container = document.getElementById(containerId);
       container.innerHTML = '';
