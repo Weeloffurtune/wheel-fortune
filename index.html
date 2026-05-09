@@ -119,11 +119,11 @@
     .stars-right {
      position: fixed;
      top: 0;
-     width: 460px;          /* ← расширил, чтобы зоны почти касались колеса */
+     width: 550px;          /* ← растянули до 550px, как просил */
      height: 100%;
      pointer-events: none;
      z-index: 2;
-     overflow: visible;     /* ← звёздочки больше не обрезаются */
+     overflow: visible;     /* звёздочки не обрезаются */
     }
 
     .stars-left {
@@ -396,7 +396,7 @@
     drawWheel();
     countSpan.textContent = currentPrizes.length;
 
-    /* === Генерация звёздочек (плотно + без обрезания) === */
+    /* === Генерация звёздочек (количество уменьшено в 2 раза) === */
     function createAnimatedStars(containerId, count) {
       const container = document.getElementById(containerId);
       container.innerHTML = '';
@@ -411,8 +411,8 @@
         container.appendChild(star);
       }
     }
-    createAnimatedStars('starsLeft', 160);
-    createAnimatedStars('starsRight', 160);
+    createAnimatedStars('starsLeft', 80);   /* ← в 2 раза меньше */
+    createAnimatedStars('starsRight', 80);  /* ← в 2 раза меньше */
   </script>
 </body>
 </html>
