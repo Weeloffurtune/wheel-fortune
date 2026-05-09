@@ -134,21 +134,25 @@
      right: 0;
     }
 
-    /* === ДВЕ ЗОЛОТЫЕ КОРОНЫ — ТОЧНО В КРАСНЫХ КВАДРАТАХ === */
+    /* === ДВЕ ЗОЛОТЫЕ КОРОНЫ — ВЫРОВНЕНЫ ПО БОКАМ ОТ ЗАГОЛОВКА === */
     .crown {
       position: absolute;
-      top: 52px;               /* высота точно под заголовком */
-      font-size: 78px;
+      top: 20px;
+      font-size: 56px;
+      line-height: 1;
+      width: 80px;
+      height: 60px;
+      text-align: center;
       color: #ffd700;
       text-shadow: 0 0 20px #ffd700, 0 0 40px #ffcc00, 0 0 60px #ffd700;
       z-index: 5;
       pointer-events: none;
     }
     .crown-left {
-      left: 155px;             /* точно в левом красном квадрате */
+      left: max(20px, calc(50% - 290px));
     }
     .crown-right {
-      right: 155px;            /* точно в правом красном квадрате */
+      right: max(20px, calc(50% - 290px));
     }
   </style>
 </head>
@@ -169,7 +173,7 @@
   <div class="stars-left" id="starsLeft"></div>
   <div class="stars-right" id="starsRight"></div>
 
-  <!-- === КОРОНЫ ТОЧНО В КРАСНЫХ КВАДРАТАХ === -->
+  <!-- === КОРОНЫ === -->
   <div class="crown crown-left">👑</div>
   <div class="crown crown-right">👑</div>
 
@@ -207,10 +211,10 @@
     let shortPrizes = [
       { name: "💰 €50 cash", color: "#FF6B6B" },
       { name: "🍔 3 food deliveries", color: "#4ECDC4" },
-      { name: "🏖️ 2 extra days off", color: "#45B7D1" },
+      { name: "🏖 2 extra days off", color: "#45B7D1" },
       { name: "💆 3 massage", color: "#96CEB4" },
       { name: "🤖 1-month AI", color: "#FFEEAD" },
-      { name: "🎟️ €75 gift card", color: "#D4A5A5" },
+      { name: "🎟 €75 gift card", color: "#D4A5A5" },
       { name: "🎬 Cinema deluxe", color: "#FF9FF3" }
     ];
     const fullPrizes = [
@@ -244,7 +248,13 @@
           c.style.background = colors[Math.floor(Math.random() * colors.length)];
           c.style.zIndex = '9999';
           document.body.appendChild(c);
-          c.animate([{ transform: 'translateY(0) rotate(0deg)' }, { transform: `translateY(${window.innerHeight + 250}px) rotate(${Math.random() * 1200}deg)` }], { duration: 2800 + Math.random() * 2200, easing: 'cubic-bezier(0.25, 0.1, 0.25, 1)' });
+          c.animate([
+            { transform: 'translateY(0) rotate(0deg)' },
+            { transform: `translateY(${window.innerHeight + 250}px) rotate(${Math.random() * 1200}deg)` }
+          ], {
+            duration: 2800 + Math.random() * 2200,
+            easing: 'cubic-bezier(0.25, 0.1, 0.25, 1)'
+          });
           setTimeout(() => c.remove(), 5000);
         }, i * 1.5);
       }
