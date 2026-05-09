@@ -21,7 +21,7 @@
       font-size: 3em;
       color: #ffd700;
       text-shadow: 0 0 40px #ffd700;
-      margin: 15px 0 48px; /* ← чуть центральнее + больше воздуха снизу */
+      margin: 15px 0 48px;
       letter-spacing: 3px;
       position: relative;
     }
@@ -31,7 +31,7 @@
       box-shadow: 0 0 95px rgba(255, 215, 0, 0.95), inset 0 0 75px rgba(255,255,255,0.4);
       max-width: 100%;
       height: auto;
-      margin-top: 12px; /* ← опустили колесо чуть ниже названия */
+      margin-top: 12px;
     }
     .controls { margin: 45px 0 30px; }
     button {
@@ -119,19 +119,19 @@
     .stars-right {
      position: fixed;
      top: 0;
-     width: 420px; /* было 280px — расширили зоны, чтобы заполнить пустоты */
+     width: 460px;          /* ← расширил, чтобы зоны почти касались колеса */
      height: 100%;
      pointer-events: none;
      z-index: 2;
-     overflow: hidden;
+     overflow: visible;     /* ← звёздочки больше не обрезаются */
     }
 
     .stars-left {
-     left: 0; /* было 30px */
+     left: 0;
     }
 
     .stars-right {
-     right: 0; /* было 30px */
+     right: 0;
     }
   </style>
 </head>
@@ -147,9 +147,11 @@
     <div id="result"></div>
     <div class="remaining">Remaining prizes: <span id="count">7</span></div>
   </div>
-  <!-- === Только добавлено: контейнеры для анимированных звёздочек слева и справа === -->
+
+  <!-- === Контейнеры для звёздочек === -->
   <div class="stars-left" id="starsLeft"></div>
   <div class="stars-right" id="starsRight"></div>
+
   <div id="nameModal">
     <div class="modal-content">
       <h2>Who's spinning?</h2>
@@ -166,6 +168,7 @@
       <button id="winButton">OK</button>
     </div>
   </div>
+
   <script>
     const canvas = document.getElementById('wheel');
     const ctx = canvas.getContext('2d');
@@ -204,9 +207,9 @@
     const centerY = canvas.height / 2;
     const radius = 335;
     let rotation = 0;
-    // Crazy Time эффекты
     let pointerBounce = 0;
     let lastTick = 0;
+
     function launchConfetti() {
       const colors = ['#ffd700', '#ff00cc', '#00ffff', '#7CFF2E', '#FF2D55'];
       for (let i = 0; i < 220; i++) {
@@ -225,17 +228,20 @@
         }, i * 1.5);
       }
     }
+
     function showNameModal(spinsCount) {
       remainingSpins = spinsCount;
       agentInput.value = "";
       nameModal.style.display = 'flex';
       agentInput.focus();
     }
+
     function startSpin() {
       currentAgent = agentInput.value.trim() || "Agent";
       nameModal.style.display = 'none';
       spinWheel();
     }
+
     function showWinModal(prizeIndex) {
       const fullPrizeText = fullPrizes[prizeIndex];
       winTitle.innerHTML = `Congratulations, <strong>${currentAgent}</strong>!`;
@@ -251,18 +257,18 @@
       winModal.style.display = 'flex';
       launchConfetti();
     }
+
     function closeWinModal() {
       winModal.style.display = 'none';
     }
+
     function drawWheel() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       const total = currentPrizes.length;
       if (total === 0) return;
       const arc = (2 * Math.PI) / total;
-      // === СЕГМЕНТЫ + ТЕКСТ ===
       currentPrizes.forEach((prize, i) => {
         const angle = rotation + arc * i;
-        // Цветной сектор
         ctx.beginPath();
         ctx.fillStyle = prize.color;
         ctx.moveTo(centerX, centerY);
@@ -272,7 +278,7 @@
         ctx.strokeStyle = "#111";
         ctx.lineWidth = 16;
         ctx.stroke();
-        // 🔥 ТЕКСТ ПРИЗА (вернули!)
+
         ctx.save();
         ctx.translate(centerX, centerY);
         ctx.rotate(angle + arc / 2);
@@ -285,7 +291,7 @@
         ctx.fillText(prize.name, radius - 132, -6);
         ctx.restore();
       });
-      // 🔴 Красные пины (Crazy Time стиль)
+
       const pinCount = currentPrizes.length * 2;
       const pinRadius = radius + 18;
       ctx.shadowColor = "#ff3333";
@@ -305,7 +311,7 @@
         ctx.fill();
       }
       ctx.shadowBlur = 0;
-      // Центр
+
       ctx.beginPath();
       ctx.fillStyle = "#111";
       ctx.arc(centerX, centerY, 65, 0, Math.PI * 2);
@@ -315,7 +321,7 @@
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillText("SPIN", centerX, centerY);
-      // Стрелка с отскоком
+
       ctx.save();
       ctx.translate(centerX + radius + 48 + pointerBounce, centerY);
       ctx.fillStyle = "#ffd700";
@@ -328,10 +334,11 @@
       ctx.closePath();
       ctx.fill();
       ctx.restore();
-      // Плавное затухание отскока
+
       pointerBounce *= 0.78;
       if (pointerBounce < 0.6) pointerBounce = 0;
     }
+
     function spinWheel() {
       if (isSpinning || currentPrizes.length === 0) return;
       isSpinning = true;
@@ -341,12 +348,13 @@
       const targetRotation = rotation + totalRotations * 2 * Math.PI + extraAngle;
       let startTime = Date.now();
       const duration = 4300;
+
       function animate() {
         const elapsed = Date.now() - startTime;
         const progress = Math.min(elapsed / duration, 1);
         const ease = 1 - Math.pow(1 - progress, 4);
         rotation = targetRotation * ease;
-        // Детекция пинов + отскок + звук
+
         const pinStep = (2 * Math.PI) / (currentPrizes.length * 2);
         const currentTick = Math.floor(rotation / pinStep);
         if (currentTick !== lastTick) {
@@ -358,7 +366,9 @@
             click.play().catch(() => {});
           } catch(e) {}
         }
+
         drawWheel();
+
         if (progress < 1) {
           requestAnimationFrame(animate);
         } else {
@@ -378,27 +388,31 @@
       }
       animate();
     }
+
     document.getElementById('spinSilver').addEventListener('click', () => showNameModal(1));
     document.getElementById('spinGold').addEventListener('click', () => showNameModal(2));
     document.getElementById('spinPlatinum').addEventListener('click', () => showNameModal(3));
+
     drawWheel();
     countSpan.textContent = currentPrizes.length;
-    /* === Только добавлено: генерация анимированных звёздочек слева и справа === */
+
+    /* === Генерация звёздочек (плотно + без обрезания) === */
     function createAnimatedStars(containerId, count) {
       const container = document.getElementById(containerId);
+      container.innerHTML = '';
       for (let i = 0; i < count; i++) {
         const star = document.createElement('div');
         star.className = 'star';
         star.textContent = '✺';
         star.style.left = Math.random() * 100 + '%';
         star.style.top = Math.random() * 100 + '%';
-        star.style.animationDelay = '-' + (Math.random() * 2.5) + 's';
-        star.style.fontSize = (14 + Math.random() * 22) + 'px';
+        star.style.animationDelay = '-' + (Math.random() * 3) + 's';
+        star.style.fontSize = (12 + Math.random() * 24) + 'px';
         container.appendChild(star);
       }
     }
-    createAnimatedStars('starsLeft', 62);
-    createAnimatedStars('starsRight', 62);
+    createAnimatedStars('starsLeft', 160);
+    createAnimatedStars('starsRight', 160);
   </script>
 </body>
 </html>
