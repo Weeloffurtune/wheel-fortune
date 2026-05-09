@@ -92,34 +92,46 @@
       font-weight: bold;
       margin: 10px;
     }
-    /* === Animated stars in left and right zones (только добавлено) === */
+
+    /* === Animated stars in left and right zones === */
     @keyframes twinkle {
-      0%, 100% { opacity: 0.3; transform: scale(0.7) rotate(0deg); }
-      50% { opacity: 1; transform: scale(1.35) rotate(15deg); }
+     0%, 100% {
+     opacity: 0.3;
+     transform: scale(0.7) rotate(0deg);
+     }
+     50% {
+     opacity: 1;
+     transform: scale(1.35) rotate(15deg);
+     }
     }
+
     .star {
-      position: absolute;
-      color: #ffd700;
-      font-size: 26px;
-      text-shadow: 0 0 12px #ffd700, 0 0 25px #ffcc00;
-      animation: twinkle 1.8s infinite alternate ease-in-out;
-      z-index: 2;
-      pointer-events: none;
+     position: absolute;
+     color: #ffd700;
+     font-size: 26px;
+     text-shadow: 0 0 12px #ffd700, 0 0 25px #ffcc00;
+     animation: twinkle 1.8s infinite alternate ease-in-out;
+     z-index: 2;
+     pointer-events: none;
     }
-    .stars-left, .stars-right {
-      position: fixed;
-      top: 0;
-      width: 280px;
-      height: 100%;
-      pointer-events: none;
-      z-index: 2;
-      overflow: hidden;
-    }
-    .stars-left {
-      left: 30px;
-    }
+
+    .stars-left,
     .stars-right {
-      right: 30px;
+     position: fixed;
+     top: 0;
+     width: 420px; /* было 280px — расширили зоны, чтобы заполнить пустоты */
+     height: 100%;
+     pointer-events: none;
+     z-index: 2;
+     overflow: hidden;
+    }
+
+    .stars-left {
+     left: 0; /* было 30px */
+    }
+
+    .stars-right {
+     right: 0; /* было 30px */
     }
   </style>
 </head>
@@ -381,11 +393,11 @@
         star.style.left = Math.random() * 100 + '%';
         star.style.top = Math.random() * 100 + '%';
         star.style.animationDelay = '-' + (Math.random() * 2.5) + 's';
-        star.style.fontSize = (14 + Math.random() * 22) + 'px';   /* ← чуть уменьшил самые большие звёзды */
+        star.style.fontSize = (14 + Math.random() * 22) + 'px';
         container.appendChild(star);
       }
     }
-    createAnimatedStars('starsLeft', 62);   /* ← чуть уменьшил количество, но зоны теперь заполнены плотнее */
+    createAnimatedStars('starsLeft', 62);
     createAnimatedStars('starsRight', 62);
   </script>
 </body>
