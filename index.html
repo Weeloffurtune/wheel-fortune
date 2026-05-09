@@ -25,22 +25,6 @@
       letter-spacing: 3px;
       position: relative;
     }
-    h1::before {
-      content: "✺";
-      position: absolute;
-      left: -82px;
-      top: 14px;
-      font-size: 36px;
-      color: #ffd700;
-    }
-    h1::after {
-      content: "✺";
-      position: absolute;
-      right: -82px;
-      top: 14px;
-      font-size: 36px;
-      color: #ffd700;
-    }
     canvas {
       border: 24px solid #ffd700;
       border-radius: 50%;
@@ -400,7 +384,7 @@
       for (let i = 0; i < count; i++) {
         const star = document.createElement('div');
         star.className = 'star';
-        star.textContent = '✺';
+        star.textContent = '✨';
         star.style.left = Math.random() * 100 + '%';
         star.style.top = Math.random() * 100 + '%';
         star.style.animationDelay = '-' + (Math.random() * 2.5) + 's';
@@ -408,8 +392,8 @@
         container.appendChild(star);
       }
     }
-    createAnimatedStars('starsLeft', 22);
-    createAnimatedStars('starsRight', 22);
+    createAnimatedStars('starsLeft', 38);
+    createAnimatedStars('starsRight', 38);
   </script>
 </body>
 </html>
