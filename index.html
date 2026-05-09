@@ -384,16 +384,16 @@
       for (let i = 0; i < count; i++) {
         const star = document.createElement('div');
         star.className = 'star';
-        star.textContent = '✨';
+        star.textContent = '✺';
         star.style.left = Math.random() * 100 + '%';
         star.style.top = Math.random() * 100 + '%';
         star.style.animationDelay = '-' + (Math.random() * 2.5) + 's';
-        star.style.fontSize = (18 + Math.random() * 26) + 'px';
+        star.style.fontSize = (14 + Math.random() * 28) + 'px';
         container.appendChild(star);
       }
     }
-    createAnimatedStars('starsLeft', 38);
-    createAnimatedStars('starsRight', 38);
+    createAnimatedStars('starsLeft', 72);
+    createAnimatedStars('starsRight', 72);
   </script>
 </body>
 </html>
