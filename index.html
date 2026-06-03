@@ -730,14 +730,6 @@ canvas#wheel {
         <span>Prizes left</span>
         <b id="count">7</b>
       </div>
-      <div>
-        <span>Cadence</span>
-        <b>Quarterly</b>
-      </div>
-      <div>
-        <span>For</span>
-        <b>The Team</b>
-      </div>
     </div>
 
     <div class="anim-in anim-d5">
@@ -766,20 +758,20 @@ canvas#wheel {
     <div id="result" class="result-line">— Choose a pass to begin —</div>
 
     <div class="passes">
-      <button class="pass" data-tier="silver" id="spinSilver">
+      <button class="pass" data-tier="platinum" id="spinPlatinum">
         <span class="pass-label">Pass № 1</span>
-        <span class="pass-name">Silver</span>
-        <span class="pass-spins">One spin</span>
+        <span class="pass-name">Platinum</span>
+        <span class="pass-spins">Three spins</span>
       </button>
       <button class="pass" data-tier="gold" id="spinGold">
         <span class="pass-label">Pass № 2</span>
         <span class="pass-name">Gold</span>
         <span class="pass-spins">Two spins</span>
       </button>
-      <button class="pass" data-tier="platinum" id="spinPlatinum">
+      <button class="pass" data-tier="silver" id="spinSilver">
         <span class="pass-label">Pass № 3</span>
-        <span class="pass-name">Platinum</span>
-        <span class="pass-spins">Three spins</span>
+        <span class="pass-name">Silver</span>
+        <span class="pass-spins">One spin</span>
       </button>
     </div>
   </section>
@@ -871,6 +863,8 @@ canvas#wheel {
 
   let currentAgent = "";
   let remainingSpins = 0;
+  let currentPassTier = "";
+  const usedPassTiers = new Set();
   let isSpinning = false;
   let rotation = 0;
   let pinPulse = 0;
@@ -1058,7 +1052,7 @@ canvas#wheel {
     resultDiv.textContent = '— SPINNING —';
     resultDiv.classList.add('spinning');
 
-    document.querySelectorAll('.pass').forEach(b => b.disabled = true);
+    updatePassButtons(true);
 
     const totalRotations = 6 + Math.random() * 4;
     const extraAngle = Math.random() * 2 * Math.PI;
@@ -1111,11 +1105,12 @@ canvas#wheel {
         void countSpan.offsetWidth;
         countSpan.classList.add('bumping');
         remainingSpins--;
+        if (remainingSpins === 0 && (currentPassTier === 'silver' || currentPassTier === 'gold')) {
+          usedPassTiers.add(currentPassTier);
+        }
         isSpinning = false;
 
-        document.querySelectorAll('.pass').forEach(b => {
-          b.disabled = currentPrizes.length === 0;
-        });
+        updatePassButtons();
 
         setTimeout(() => {
           launchConfetti();
@@ -1127,8 +1122,15 @@ canvas#wheel {
   }
 
   /* ─── Modals ─── */
-  function showNameModal(spinsCount) {
+  function updatePassButtons(disableAll = false) {
+    document.querySelectorAll('.pass').forEach(button => {
+      button.disabled = disableAll || currentPrizes.length === 0 || usedPassTiers.has(button.dataset.tier);
+    });
+  }
+
+  function showNameModal(spinsCount, passTier) {
     remainingSpins = spinsCount;
+    currentPassTier = passTier;
     agentInput.value = '';
     nameModal.classList.add('visible');
     setTimeout(() => agentInput.focus(), 200);
@@ -1238,9 +1240,9 @@ canvas#wheel {
   }
 
   /* ─── Wire ─── */
-  document.getElementById('spinSilver').addEventListener('click', () => showNameModal(1));
-  document.getElementById('spinGold').addEventListener('click', () => showNameModal(2));
-  document.getElementById('spinPlatinum').addEventListener('click', () => showNameModal(3));
+  document.getElementById('spinSilver').addEventListener('click', () => showNameModal(1, 'silver'));
+  document.getElementById('spinGold').addEventListener('click', () => showNameModal(2, 'gold'));
+  document.getElementById('spinPlatinum').addEventListener('click', () => showNameModal(3, 'platinum'));
 
   agentInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') window.startSpin();
